@@ -1,15 +1,26 @@
 {
   "name": "djs-games",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A Discord Js Package for Mini-Games",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Gizmo",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "discord.js": "^12.5.3",
     "node-fetch": "^2.6.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "\t"
+  },
+  "keywords": [
+    "discord",
+    "discord-games",
+    "mini-games",
+    "discord.js"
+  ]
 }
