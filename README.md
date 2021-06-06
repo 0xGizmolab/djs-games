@@ -10,7 +10,6 @@ A discord.js Games Package with ConnectFour, Snake, rock paper scissors, guessTh
 ```
 USE ACCORDING TO YOUR COMMAND HANDLER
 ```
-====
 
 **Tic Tac Toe**
 === 
