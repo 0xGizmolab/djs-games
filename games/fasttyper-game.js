@@ -8,7 +8,7 @@ class fastTyper {
         this.word = ""
     }
 
-    newGame(msg) {
+    startGame(msg) {
 
         let word = possible_words[Math.floor(Math.random() * possible_words.length)]
 
