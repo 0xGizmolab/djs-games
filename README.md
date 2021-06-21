@@ -1,6 +1,6 @@
 # About
-A discord.js Games Package with ConnectFour, Snake, rock paper scissors, guessTheNumber, tictactoe , fast type!
-
+A discord.js Games Package with Who's that Pokemon, ConnectFour, Snake, rock paper scissors, guessTheNumber, tictactoe , fast type!
+Join our [Support Server](https://discord.gg/jDP2FbvCdk) for help
 # Installation
 
 ```npm i djs-games```
@@ -9,6 +9,18 @@ A discord.js Games Package with ConnectFour, Snake, rock paper scissors, guessTh
 
 ```
 USE ACCORDING TO YOUR COMMAND HANDLER
+```
+
+**Who's That Pokemon**
+=== 
+![](https://cdn.discordapp.com/attachments/856573008302309376/856574463453691934/npmpokemon.gif)
+```js
+ const { Pokemon } = require('djs-games')
+    const game = new Pokemon({
+    message: message,
+    token: "dagpi-token-here", // Get Your Api Token at https://dagpi.xyz/dashboard
+    })
+    game.start()
 ```
 
 **Tic Tac Toe**

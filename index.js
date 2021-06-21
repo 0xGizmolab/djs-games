@@ -9,3 +9,5 @@ module.exports.FastTyper = require('./games/fasttyper-game')
 module.exports.GuessTheNumber = require('./games/guessTheNumber-game')
 
 module.exports.RockPaperScissors = require('./games/rps-game')
+
+module.exports.Pokemon = require('./games/pokemon-game')
