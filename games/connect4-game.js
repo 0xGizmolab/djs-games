@@ -11,7 +11,7 @@ class ConnectFour {
         const challenger = msg.author;
         const oppenent = msg.mentions.users.first();
 
-        if (!oppenent) return msg.channel.send(`**With who do you wanna play Connect Four?**`)
+        if (!oppenent) return msg.channel.send(`**Who do you wanna play Connect Four with?(Mention the person with the command.**`)
 
         const board = [
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -35,7 +35,7 @@ class ConnectFour {
         const initialState = renderBoard(board);
 
         const initial = new discord.MessageEmbed()
-            .setTitle(`🔴 ${msg.author.username} It's your turn!`)
+            .setTitle(`🔴 It's your turn, ${msg.author.username}!`)
             .setDescription(initialState)
             .setFooter(`${challenger.username} vs ${oppenent.username}`)
         msg.channel.send({ embeds: [initial] }).then(gameMessage => {
@@ -180,7 +180,7 @@ class ConnectFour {
                     if (tieCheck()) {
                         gameMessage.reactions.removeAll()
                         const TieEmbed = new discord.MessageEmbed()
-                            .setTitle(`The game ended, it is Tie!`)
+                            .setTitle(`The game ended, it is a Tie!`)
                             .setDescription(renderBoard(board))
                             .setFooter(`${challenger.username} vs ${oppenent.username}`)
                         gameCollector.stop("Tie Game")
@@ -205,7 +205,7 @@ class ConnectFour {
                     player = (player + 1) % 2;
 
                     const newEmbed = new discord.MessageEmbed()
-                        .setTitle(`${gameData[player].playerColor} - ${gameData[player].member.username} It's your turn!`)
+                        .setTitle(`${gameData[player].playerColor} -  It's your turn, ${gameData[player].member.username}!`)
                         .setDescription(renderBoard(board))
                         .setFooter(`${challenger.username} vs ${oppenent.username}`)
                     gameMessage.edit({ embeds: [newEmbed] });
