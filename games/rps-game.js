@@ -6,17 +6,17 @@ class RockPaperScissors {
 
         var challenger = message.author;
         var opponent = message.mentions.users.first()
-        if (!opponent) return message.channel.send(`**Who do you wanna play Rock Paper Scissors with?**`)
+        if (!opponent) return message.channel.send(`**Who do you wanna play Rock Paper Scissors with?(You have to tag the person with the command)**`)
 
-        message.channel.send(`**${challenger.username} and ${opponent.username} look in your DM's to start/finish the RPS game!**`)
+        message.channel.send(`**${challenger.username} and ${opponent.username}, take a look in your DM's to play the RPS game!**`)
 
         const startEmbed1 = new discord.MessageEmbed()
             .setTitle(`It's ${challenger.username}'s turn! Waiting...`)
         var waitingEmoji = await opponent.send({ embeds: [startEmbed1] })
 
         const startEmbed = new discord.MessageEmbed()
-            .setTitle(`${challenger.username}, It's your turn!`)
-            .setDescription(`What move are you gonna make?
+            .setTitle(`It's your turn, ${challenger.username}!`)
+            .setDescription(`What move will you make?
         
         🪨 = Rock
         🧻 = Paper
@@ -40,12 +40,12 @@ class RockPaperScissors {
             cResult = "rock"
 
             const rockEmbed = new discord.MessageEmbed()
-                .setTitle(`It's ${opponent.username} his turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit(rockEmbed)
+                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
+            var waitingEmoji1 = await startEmoji.edit({ embeds: [rockEmbed] })
 
             const oppenentEmbed = new discord.MessageEmbed()
-                .setTitle(`${opponent.username}, It's your turn!`)
-                .setDescription(`Wich play do you gonna make?
+                .setTitle(`It's your turn, ${challenger.username}!`)
+                .setDescription(`What move will you make?
         
             🪨 = Rock
             🧻 = Paper
@@ -69,14 +69,14 @@ class RockPaperScissors {
                     if (oResult === "rock") {
                         const drawEmbed = new discord.MessageEmbed()
                             .setColor("RANDOM")
-                            .setTitle(`It's a Draw!`)
+                            .setTitle(`Its a Draw!`)
                             .setDescription(`You played: 🪨
                         ${opponent.username} played: 🪨`)
                         waitingEmoji1.edit({ embeds: [drawEmbed] })
 
                         const drawEmbed1 = new discord.MessageEmbed()
                             .setColor("RANDOM")
-                            .setTitle(`It's a Draw!`)
+                            .setTitle(`Its a Draw!`)
                             .setDescription(`You played: 🪨
                         ${challenger.username} played: 🪨`)
                         return endEmoji.edit({ embeds: [drawEmbed1] })
@@ -105,6 +105,8 @@ class RockPaperScissors {
 
                 oResult = "scissors"
 
+
+
             }
 
         } else if (reaction1.emoji.name === "🧻") {
@@ -112,14 +114,14 @@ class RockPaperScissors {
             cResult = "paper"
 
             const paperEmbed = new discord.MessageEmbed()
-                .setTitle(`It's ${opponent.username} his turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit({ embeds: [paperEmbed] })
+                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
+            var waitingEmoji1 = await startEmoji.edit(paperEmbed)
 
             const oppenentEmbed = new discord.MessageEmbed()
-                .setTitle(`${opponent.username}, It's your turn!`)
-                .setDescription(`What do you choose?
+                .setTitle(`It's your turn, ${opponent.username}!`)
+                .setDescription(`What move will you make?
         
-            🪨 = rock
+            🪨 = Rock
             🧻 = Paper
             ✂️ = Scissors`)
             var endEmoji = await waitingEmoji.edit({ embeds: [oppenentEmbed] })
@@ -154,14 +156,14 @@ class RockPaperScissors {
             cResult = "scissors"
 
             const scissorsEmbed = new discord.MessageEmbed()
-                .setTitle(`It's ${opponent.username} his turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit({ embeds: [scissorsEmbed] })
+                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
+            var waitingEmoji1 = await startEmoji.edit(scissorsEmbed)
 
             const oppenentEmbed = new discord.MessageEmbed()
-                .setTitle(`${opponent.username}, It's your turn!`)
-                .setDescription(`what do you choose?
+                .setTitle(`It's your turn, ${opponent.username}!`)
+                .setDescription(`What move will you make?
         
-            🪨 = rock
+            🪨 = Rock
             🧻 = Paper
             ✂️ = Scissors`)
             var endEmoji = await waitingEmoji.edit({ embeds: [oppenentEmbed] })
@@ -194,14 +196,14 @@ class RockPaperScissors {
             if (oResult === "rock") {
                 const drawEmbed = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: 🪨
                     ${opponent.username} played: 🪨`)
                 waitingEmoji1.edit({ embeds: [drawEmbed] })
 
                 const drawEmbed1 = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: 🪨
                     ${challenger.username} played: 🪨`)
                 return endEmoji.edit({ embeds: [drawEmbed1] })
@@ -239,14 +241,14 @@ class RockPaperScissors {
             if (oResult === "paper") {
                 const drawEmbed = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: 🧻
                     ${opponent.username} played: 🧻`)
                 waitingEmoji1.edit({ embeds: [drawEmbed] })
 
                 const drawEmbed1 = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: 🧻
                     ${challenger.username} played: 🧻`)
                 return endEmoji.edit({ embeds: [drawEmbed1] })
@@ -284,14 +286,14 @@ class RockPaperScissors {
             if (oResult === "scissors") {
                 const drawEmbed = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: ✂️
                     ${opponent.username} played: ✂️`)
                 waitingEmoji1.edit({ embeds: [drawEmbed] })
 
                 const drawEmbed1 = new discord.MessageEmbed()
                     .setColor("RANDOM")
-                    .setTitle(`It's a Draw!`)
+                    .setTitle(`Its a Draw!`)
                     .setDescription(`You played: ✂️
                     ${challenger.username} played: ✂️`)
                 return endEmoji.edit({ embeds: [drawEmbed1] })
@@ -325,6 +327,7 @@ class RockPaperScissors {
                 return waitingEmoji1.edit({ embeds: [loseEmbed1] })
             }
         }
+
 
     }
 }

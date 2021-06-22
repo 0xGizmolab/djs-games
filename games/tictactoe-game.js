@@ -8,7 +8,7 @@ class TicTacToe {
     startGame(msg) {
 
         let opponent = msg.mentions.users.first();
-        if (!opponent) return msg.channel.send(`**With who do you wanna play TicTacToe?**`)
+        if (!opponent) return msg.channel.send(`**Who do you wanna play TicTacToe with?(you have to tag the person you want to play with after the command.)**`)
 
         this.gameAuthor = msg.author
         this.gameOpp = opponent
@@ -39,7 +39,7 @@ class TicTacToe {
 
         let embed = new Discord.MessageEmbed()
             .setColor("RANDOM")
-            .setTitle(`❌ - ${msg.author.username}, it's your turn!`)
+            .setTitle(`❌ - it's your turn ${msg.author.username}!`)
             .setDescription(initialState)
             .setFooter(`${msg.author.username} vs ${opponent.username}`)
         msg.channel.send({ embeds: [embed] }).then(emsg => {
@@ -589,7 +589,7 @@ class TicTacToe {
                     player = (player + 1) % 2;
 
                     const newEmbed = new Discord.MessageEmbed()
-                        .setTitle(`${gameData[player].playerColor} - ${gameData[player].member.username} its your turn!`)
+                        .setTitle(`${gameData[player].playerColor} - It's your turn, ${gameData[player].member.username}!`)
                         .setDescription(renderBoard(board))
                         .setFooter(`${msg.author.username} vs ${opponent.username}`)
                     this.gameEmbed.edit({ embeds: [newEmbed] });
