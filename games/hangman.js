@@ -37,7 +37,7 @@ class HangmanGame {
             .addField('How To Play', "React to this message using the emojis that look like letters (🅰️, 🇹, )")
             .setTimestamp();
 
-        msg.channel.send(embed).then(emsg => {
+        msg.channel.send({ embeds: [embed] }).then(emsg => {
             this.gameEmbed = emsg;
             this.waitForReaction();
         });
@@ -70,7 +70,7 @@ class HangmanGame {
                 .addField('Letters Guessed', this.guesssed.length == 0 ? '\u200b' : this.guesssed.join(" "))
                 .addField('How To Play', "React to this message using the emojis that look like letters (🅰️, 🇹, )")
                 .setTimestamp();
-            this.gameEmbed.edit(editEmbed);
+            this.gameEmbed.edit({ embeds: [editEmbed] });
             this.waitForReaction();
         }
     }
@@ -82,7 +82,7 @@ class HangmanGame {
             .setTitle('Hangman')
             .setDescription((win ? "Chat Wins!" : "Chat loses") + "\n\nThe Word was:\n" + this.word)
             .setTimestamp();
-        this.gameEmbed.edit(editEmbed);
+        this.gameEmbed.edit({ embeds: [editEmbed] });
 
         this.gameEmbed.reactions.removeAll();
     }
