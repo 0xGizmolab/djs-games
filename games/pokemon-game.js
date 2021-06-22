@@ -51,7 +51,7 @@ class Pokemon {
     .setImage(data.answer)
     
 
-    this.message.channel.send(pok)
+    this.message.channel.send({ embeds: [pok] })
     const gameFilter = m => m.author.id
     const gameCollector = this.message.channel.createMessageCollector(gameFilter);
 
@@ -59,10 +59,10 @@ class Pokemon {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
 if (selection === data.Data.name) {
-this.message.reply(right)
+this.message.channel.send({ embeds: [right] })
 gameCollector.stop()
           }else if (selection === "stop") {
-            this.message.channel.send(wrong)
+            this.message.channel.send({ embeds: [wrong] })
             gameCollector.stop();
           } else if (selection !== data.Data.name ) {
             this.message.channel.send(`Wrong Guess Try Again! - Type stop to cancel the Game`)
