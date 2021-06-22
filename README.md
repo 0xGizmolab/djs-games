@@ -64,8 +64,8 @@ const RockPaperScissors = new djsGames.RockPaperScissors()
 
 ```js
 const djsGames = require('djs-games')
-const guessTheNumber = new djsGames.guessTheNumber()
- guessTheNumber.startGame(message)
+const guessTheNumber = new djsGames.GuessTheNumber()
+ GuessTheNumber.startGame(message)
 ```
 
 **Fast Type**
