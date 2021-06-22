@@ -13,30 +13,30 @@ class fastTyper {
         let word = possible_words[Math.floor(Math.random() * possible_words.length)]
 
         let beginEmbed = new discord.MessageEmbed()
-        .setColor("#960202")
-        .setTitle(`Fast Typer`)
-        .setDescription(`**Choosing a word...**
+            .setColor("#960202")
+            .setTitle(`Fast Typer`)
+            .setDescription(`**Choosing a word...**
         Games begins in 5 seconds...
         Game begins in 4 seconds...
         Game begins in 3 seconds...
         Game begins in 2 seconds...
         Game begins in 1 second...
         The word is...`)
-        .setTimestamp()
+            .setTimestamp()
 
-        msg.channel.send(beginEmbed).then(emsg => {
+        msg.channel.send({ embeds: [beginEmbed] }).then(emsg => {
 
             msg.channel.awaitMessages(m => m.content.toLowerCase().startsWith(word),
-            {max: 1, time: 60000}).then(async collected => {
+                { max: 1, time: 60000 }).then(async collected => {
 
-                let firstCollected = collected.first().content
+                    let firstCollected = collected.first().content
 
-                collected.first().react('🎉')
-            
-                let winnerEmbed = new discord.MessageEmbed()
-                .setColor("YELLOW")
-                .setTitle(`Fast Typer`)
-                .setDescription(`Choosing a word...
+                    collected.first().react('🎉')
+
+                    let winnerEmbed = new discord.MessageEmbed()
+                        .setColor("YELLOW")
+                        .setTitle(`Fast Typer`)
+                        .setDescription(`Choosing a word...
                 Games begins in 5 seconds...
                 Game begins in 4 seconds...
                 Game begins in 3 seconds...
@@ -46,124 +46,124 @@ class fastTyper {
                 
                 **GG!**
                 **The winner is ${collected.first().author}**`)
-                .setTimestamp()
-                emsg.edit(winnerEmbed)
-            }).catch(err => {
+                        .setTimestamp()
+                    emsg.edit({ embeds: [winnerEmbed] })
+                }).catch(err => {
 
-                let timeEmbed = new discord.MessageEmbed()
-                .setColor("#960202")
-                .setTitle(`Fast Typer`)
-                .setDescription(`**You guys were to late to type the word correctly!**`)
-                .setTimestamp()
-                return emsg.edit(timeEmbed)
-            })
+                    let timeEmbed = new discord.MessageEmbed()
+                        .setColor("#960202")
+                        .setTitle(`Fast Typer`)
+                        .setDescription(`**You guys were to late to type the word correctly!**`)
+                        .setTimestamp()
+                    return emsg.edit({ embeds: [timeEmbed] })
+                })
 
             setTimeout(() => {
 
                 let second1 = new discord.MessageEmbed()
-                .setColor("#b80404")
-                .setTitle(`Fast Typer`)
-                .setDescription(`Choosing a word...
+                    .setColor("#b80404")
+                    .setTitle(`Fast Typer`)
+                    .setDescription(`Choosing a word...
                 **Games begins in 5 seconds...**
                 Game begins in 4 seconds...
                 Game begins in 3 seconds...
                 Game begins in 2 seconds...
                 Game begins in 1 second...
                 The word is...`)
-                .setTimestamp()
+                    .setTimestamp()
 
-                emsg.edit(second1)
-    
+                emsg.edit({ embeds: [second1] })
+
                 setTimeout(() => {
 
                     let second2 = new discord.MessageEmbed()
-                    .setColor("#ff0000")
-                    .setTitle(`Fast Typer`)
-                    .setDescription(`Choosing a word...
+                        .setColor("#ff0000")
+                        .setTitle(`Fast Typer`)
+                        .setDescription(`Choosing a word...
                     Games begins in 5 seconds...
                     **Game begins in 4 seconds...**
                     Game begins in 3 seconds...
                     Game begins in 2 seconds...
                     Game begins in 1 second...
                     The word is...`)
-                    .setTimestamp()
-    
-                    emsg.edit(second2)
-    
+                        .setTimestamp()
+
+                    emsg.edit({ embeds: [second2] })
+
                     setTimeout(() => {
 
                         let second3 = new discord.MessageEmbed()
-                        .setColor("#c45f00")
-                        .setTitle(`Fast Typer`)
-                        .setDescription(`Choosing a word...
+                            .setColor("#c45f00")
+                            .setTitle(`Fast Typer`)
+                            .setDescription(`Choosing a word...
                         Games begins in 5 seconds...
                         Game begins in 4 seconds...
                         **Game begins in 3 seconds...**
                         Game begins in 2 seconds...
                         Game begins in 1 second...
                         The word is...`)
-                        .setTimestamp()
-    
-                        emsg.edit(second3)
-    
+                            .setTimestamp()
+
+                        emsg.edit({ embeds: [second3] })
+
                         setTimeout(() => {
 
                             let second4 = new discord.MessageEmbed()
-                            .setColor("#e06e02")
-                            .setTitle(`Fast Typer`)
-                            .setDescription(`Choosing a word...
+                                .setColor("#e06e02")
+                                .setTitle(`Fast Typer`)
+                                .setDescription(`Choosing a word...
                             Games begins in 5 seconds...
                             Game begins in 4 seconds...
                             Game begins in 3 seconds...
                             **Game begins in 2 seconds...**
                             Game begins in 1 second...
                             The word is...`)
-                            .setTimestamp()
-    
-                            emsg.edit(second4)
-    
+                                .setTimestamp()
+
+                            emsg.edit({ embeds: [second4] })
+
                             setTimeout(() => {
 
                                 let second5 = new discord.MessageEmbed()
-                                .setColor("#ff7c00")
-                                .setTitle(`Fast Typer`)
-                                .setDescription(`Choosing a word...
+                                    .setColor("#ff7c00")
+                                    .setTitle(`Fast Typer`)
+                                    .setDescription(`Choosing a word...
                                 Games begins in 5 seconds...
                                 Game begins in 4 seconds...
                                 Game begins in 3 seconds...
                                 Game begins in 2 seconds...
                                 **Game begins in 1 second...**
                                 The word is...`)
-                                .setTimestamp()
-    
-                                emsg.edit(second5)
-    
+                                    .setTimestamp()
+
+                                emsg.edit({ embeds: [second5] })
+
                                 setTimeout(() => {
 
                                     let second6 = new discord.MessageEmbed()
-                                    .setColor("#00ff00")
-                                    .setTitle(`Fast Typer`)
-                                    .setDescription(`Choosing a word...
+                                        .setColor("#00ff00")
+                                        .setTitle(`Fast Typer`)
+                                        .setDescription(`Choosing a word...
                                     Games begins in 5 seconds...
                                     Game begins in 4 seconds...
                                     Game begins in 3 seconds...
                                     Game begins in 2 seconds...
                                     Game begins in 1 second...
                                     **The word is... ${word}**`)
-                                    .setTimestamp()
-    
-                                    emsg.edit(second6)
-                                    
+                                        .setTimestamp()
+
+                                    emsg.edit({ embeds: [second6] })
+
                                 }, 1000)
-                                
+
                             }, 1000)
-                            
+
                         }, 1000)
-                        
+
                     }, 1000)
-                    
+
                 }, 1000)
-    
+
             }, 1000)
 
         })
