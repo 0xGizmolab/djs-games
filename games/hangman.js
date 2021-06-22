@@ -20,7 +20,7 @@ class HangmanGame {
         this.wrongs = 0;
     }
 
-    newGame(msg) {
+    startGame(msg) {
         if (this.inGame)
             return;
 
@@ -28,7 +28,6 @@ class HangmanGame {
         this.word = possible_words[Math.floor(Math.random() * possible_words.length)].toUpperCase();
         this.guesssed = [];
         this.wrongs = 0;
-
 
         const embed = new Discord.MessageEmbed()
             .setColor('#db9a00')
@@ -38,7 +37,7 @@ class HangmanGame {
             .addField('How To Play', "React to this message using the emojis that look like letters (🅰️, 🇹, )")
             .setTimestamp();
 
-        msg.channel.send({ embeds: [embed] }).then(emsg => {
+        msg.channel.send(embed).then(emsg => {
             this.gameEmbed = emsg;
             this.waitForReaction();
         });
@@ -71,7 +70,7 @@ class HangmanGame {
                 .addField('Letters Guessed', this.guesssed.length == 0 ? '\u200b' : this.guesssed.join(" "))
                 .addField('How To Play', "React to this message using the emojis that look like letters (🅰️, 🇹, )")
                 .setTimestamp();
-            this.gameEmbed.edit({ embeds: [editEmbed] });
+            this.gameEmbed.edit(editEmbed);
             this.waitForReaction();
         }
     }
@@ -83,7 +82,7 @@ class HangmanGame {
             .setTitle('Hangman')
             .setDescription((win ? "Chat Wins!" : "Chat loses") + "\n\nThe Word was:\n" + this.word)
             .setTimestamp();
-        this.gameEmbed.edit({ message: [editEmbed] });
+        this.gameEmbed.edit(editEmbed);
 
         this.gameEmbed.reactions.removeAll();
     }
