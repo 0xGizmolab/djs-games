@@ -16,7 +16,7 @@ class RockPaperScissors {
 
         const startEmbed = new discord.MessageEmbed()
         .setTitle(`${challenger.username}, its your turn!`)
-        .setDescription(`Wich play do you gonna make?
+        .setDescription(`Which play do you gonna make?
         
         🪨 = Stone
         🧻 = Paper
@@ -45,7 +45,7 @@ class RockPaperScissors {
 
             const oppenentEmbed = new discord.MessageEmbed()
             .setTitle(`${opponent.username}, its your turn!`)
-            .setDescription(`Wich play do you gonna make?
+            .setDescription(`Which play do you gonna make?
         
             🪨 = Stone
             🧻 = Paper

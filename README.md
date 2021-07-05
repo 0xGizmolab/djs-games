@@ -1,6 +1,8 @@
 # About
 A discord.js Games Package with Who's that Pokemon, ConnectFour, Snake, rock paper scissors, guessTheNumber, tictactoe , fast type!
 Join our [Support Server](https://discord.gg/jDP2FbvCdk) for help
+The Update for DJS-V13 is Out! You Can use this package with djs-13 by installing djs-games@dev
+
 # Installation
 
 ```npm i djs-games```
@@ -81,9 +83,12 @@ FastTyper.startGame(message)
 # Credits
 Thanks to Koenie For the Code Base!
 
+# Note: 
+Please Respect the license and dont just copy  the whole thing as paste as your own package!
+
 # Updates
 
-This package will most probably stop working when Discord.js v13 is out!  I'll be updating the package once it is out and add some new features.
+The Update for DJS-V13 is Out! You Can use this package with djs-13 by installing djs-games@dev
 
 # Help
 
