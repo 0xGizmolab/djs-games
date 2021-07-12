@@ -11,7 +11,7 @@ class ConnectFour {
         const challenger = msg.author;
         const oppenent = msg.mentions.users.first();
 
-        if(!oppenent) return msg.channel.send(`**With who do you wanna play Connect Four?**`)
+        if(!oppenent) return msg.channel.send(`**With whom do you wanna play Connect Four?**`)
          
         const board = [
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],

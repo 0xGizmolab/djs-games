@@ -11,3 +11,5 @@ module.exports.GuessTheNumber = require('./games/guessTheNumber-game')
 module.exports.RockPaperScissors = require('./games/rps-game')
 
 module.exports.Pokemon = require('./games/pokemon-game')
+
+module.exports.HangMan = require('./games/hangman-game')

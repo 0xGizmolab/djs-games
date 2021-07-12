@@ -58,7 +58,7 @@ class Pokemon {
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
-if (selection === data.Data.name) {
+if (selection === data.Data.name.toLowerCase() || data.Data.name) {
 this.message.reply(right)
 gameCollector.stop()
           }else if (selection === "stop") {
