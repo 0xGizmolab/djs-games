@@ -52,13 +52,13 @@ class Pokemon {
     
 
     this.message.channel.send({ embeds: [pok] })
-    const gameFilter = m => m.author.id
+    const gameFilter = m => m.author.id === this.message.author.id
     const gameCollector = this.message.channel.createMessageCollector(gameFilter);
 
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
-if (selection === data.Data.name) {
+if (selection === data.Data.name.toLowerCase()) {
 this.message.channel.send({ embeds: [right] })
 gameCollector.stop()
           }else if (selection === "stop") {

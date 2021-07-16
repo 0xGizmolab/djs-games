@@ -28,7 +28,7 @@ class RockPaperScissors {
         await startEmoji.react('✂️')
 
         const filter1 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === challenger.id;
-        const response1 = await startEmoji.awaitReactions(filter1, { max: 1 });
+        const response1 = await startEmoji.awaitReactions({ filter: filter1, max: 1 });
 
         const reaction1 = response1.first();
 
@@ -57,7 +57,7 @@ class RockPaperScissors {
             await endEmoji.react('✂️')
 
             const filter2 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === opponent.id;
-            const response2 = await endEmoji.awaitReactions(filter2, { max: 1 });
+            const response2 = await endEmoji.awaitReactions({ filter: filter2, max: 1 });
 
             const reaction2 = response2.first();
 
