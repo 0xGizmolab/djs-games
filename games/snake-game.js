@@ -81,7 +81,7 @@ class SnakeGame {
 
                 const filter = (reaction, user) => ["⬅️", "⬆️", "⬇️", "➡️"].includes(reaction.emoji.name) && (user.id === msg.author.id);
 
-                gameMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+                gameMessage.awaitReactions({ filter: filter, max: 1, time: 60000, errors: ['time'] })
                     .then(collected => {
                         const reaction = collected.first()
 

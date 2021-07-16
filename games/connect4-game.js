@@ -50,7 +50,7 @@ class ConnectFour {
 
             const gameFilter = (reaction, user) => ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"].includes(reaction.emoji.name) && (user.id === oppenent.id || user.id === challenger.id);
 
-            const gameCollector = gameMessage.createReactionCollector(gameFilter);
+            const gameCollector = gameMessage.createReactionCollector({ filter: gameFilter });
 
             const gameData = [
                 { member: challenger, playerColor: "🔴" },
