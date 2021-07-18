@@ -1,6 +1,6 @@
 {
   "name": "djs-games",
-  "version": "1.5.2",
+  "version": "1.6.5",
   "description": "A Discord Js Package for Mini-Games",
   "main": "index.js",
   "scripts": {
@@ -12,10 +12,11 @@
     "discord.js": "^12.5.3",
     "node-fetch": "^2.6.1"
   },
+  
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/gizmo-dev/djs-games"
+    "url": "https://github.com/gizmo-dev/djs-games.git"
   },
   "keywords": [
     "discord",

@@ -13,3 +13,7 @@ module.exports.RockPaperScissors = require('./games/rps-game')
 module.exports.Pokemon = require('./games/pokemon-game')
 
 module.exports.HangMan = require('./games/hangman-game')
+
+module.exports.GTL = require('./games/guessTheLogo-game')
+
+module.exports.GTF = require('./games/guessTheFlag-game')

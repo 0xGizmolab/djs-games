@@ -1,12 +1,6 @@
 class Pokemon {
-    /**
-     * @name ShuffleGuess
-     * @kind constructor
-     * @param {Object} options options
-     * @param {any} [options.message] message
-     * @param {any} [options.token] token
-     * @param {any} [options.winMessage] win message
-     */
+    
+    
     constructor(options) {
         if(!options.token) throw new TypeError('Missing argument: token')
         if(typeof options.token !== 'string') throw new TypeError('token must be in a string')
@@ -58,7 +52,7 @@ class Pokemon {
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
-if (selection === data.Data.name.toLowerCase() || data.Data.name) {
+if (selection === data.Data.name.toLowerCase()) {
 this.message.reply(right)
 gameCollector.stop()
           }else if (selection === "stop") {
