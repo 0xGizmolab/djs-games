@@ -1,3 +1,10 @@
+<h1 align="center">djs-games</h1>
+<p align="center">
+   
+   <br>
+   <a href="https://www.npmjs.com/package/djs-games"><img src="https://nodei.co/npm/djs-games.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>
+</p>
+
 # About
 A discord.js Games Package with Who's that Pokemon, ConnectFour, Snake, rock paper scissors, guessTheNumber, tictactoe , fast type!
 Join our [Support Server](https://discord.gg/jDP2FbvCdk) for help
