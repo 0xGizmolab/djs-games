@@ -124,7 +124,7 @@ Please Respect the license and dont just copy  the whole thing as paste as your 
 
 # Updates
 
-The Update for DJS-V13 is Out! You Can use this package with djs-13 by installing djs-games@dev
+The Update for DJS-V13 is Out! You Can use this package with djs-13 by installing djs-games
 
 # Help
 
