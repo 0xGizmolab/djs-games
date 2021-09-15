@@ -1,6 +1,6 @@
 {
   "name": "djs-games",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "description": "A Discord Js Package for Mini-Games",
   "main": "index.js",
   "scripts": {
