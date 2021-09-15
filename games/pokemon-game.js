@@ -1,6 +1,12 @@
 class Pokemon {
-    
-    
+    /**
+     * @name ShuffleGuess
+     * @kind constructor
+     * @param {Object} options options
+     * @param {any} [options.message] message
+     * @param {any} [options.token] token
+     * @param {any} [options.winMessage] win message
+     */
     constructor(options) {
         if(!options.token) throw new TypeError('Missing argument: token')
         if(typeof options.token !== 'string') throw new TypeError('token must be in a string')
@@ -45,18 +51,18 @@ class Pokemon {
     .setImage(data.answer)
     
 
-    this.message.channel.send(pok)
-    const gameFilter = m => m.author.id
-    const gameCollector = this.message.channel.createMessageCollector(gameFilter);
+    this.message.channel.send({ embeds: [pok] })
+    const gameFilter = m => m.author.id === this.message.author.id
+    const gameCollector = this.message.channel.createMessageCollector({gameFilter});
 
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
 if (selection === data.Data.name.toLowerCase()) {
-this.message.reply(right)
+this.message.channel.send({ embeds: [right] })
 gameCollector.stop()
           }else if (selection === "stop") {
-            this.message.channel.send(wrong)
+            this.message.channel.send({ embeds: [wrong] })
             gameCollector.stop();
           } else if (selection !== data.Data.name ) {
             this.message.channel.send(`Wrong Guess Try Again! - Type stop to cancel the Game`)

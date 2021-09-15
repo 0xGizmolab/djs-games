@@ -40,7 +40,6 @@ class GTF {
           
     const que = new Discord.MessageEmbed()
     .setTitle(`Guess the Flag!`)
-    .addField(`Capital:`, `${data.Data.capital}`)
     .setColor(this.questionColor || "RANDOM")
     .setImage(data.flag)
     .setFooter(this.questionFooter || "Made by GizmoLab")
@@ -64,21 +63,21 @@ class GTF {
     .setFooter(this.lostFooter || "Made by GizmoLab")
     
 
-    this.message.channel.send(que)
-    const gameFilter = m => m.author.id
-    const gameCollector = this.message.channel.createMessageCollector(gameFilter);
+    this.message.channel.send({ embeds: [que] })
+    const gameFilter = m => m.author.id === this.message.author.id
+    const gameCollector = this.message.channel.createMessageCollector({gameFilter});
 
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content;
 if (selection === data.Data.name.common.toLowerCase()) {
-this.message.reply(right)
+this.message.reply({ embeds: [right] })
 gameCollector.stop()
           }else if (selection === this.stopCommand) {
-            this.message.channel.send(wrong)
+            this.message.channel.send({ embeds: [wrong] })
             gameCollector.stop();
           } else if (selection !== data.Data.name.common) {
-            this.message.channel.send(`Wrong Guess Try Again! - Type ${this.stopCommand} to cancel the Game`)
+            this.message.channel.send({ content:`Wrong Guess Try Again! - Type ${this.stopCommand} to cancel the Game`})   
           }
     })
     

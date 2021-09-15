@@ -1,15 +1,9 @@
-<h1 align="center">djs-games</h1>
-<p align="center">
-   
-   <br>
-   <a href="https://www.npmjs.com/package/djs-games"><img src="https://nodei.co/npm/djs-games.png?downloadRank=true&downloads=true&downloadRank=true&stars=true" /></a>
-</p>
-
 # About
-A discord.js Games Package with Who's that Pokemon, ConnectFour, Snake, rock paper scissors, guessTheNumber, tictactoe , fast type!
-Join our [Support Server](https://discord.gg/jDP2FbvCdk) for help
-The Update for DJS-V13 is Out! You Can use this package with djs-13 by installing djs-games@dev
-
+- A discord.js Games Package with Who's that Pokemon, ConnectFour, Snake, rock paper scissors, guessTheNumber, , guess the Logo , Guess The Flag, tictactoe , fast type!
+- Join our [Support Server](https://discord.gg/jDP2FbvCdk) for help
+The Update for DJS-V13 is Out! 
+- For Discord.js v13: npm i djs-games
+- For Discord.js v12: npm i djs-games@old
 # Installation
 
 ```npm i djs-games```

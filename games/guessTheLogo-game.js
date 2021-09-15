@@ -67,21 +67,21 @@ class GTL {
     .setFooter(this.lostFooter || "Made by GizmoLab")
     
 
-    this.message.channel.send(que)
-    const gameFilter = m => m.author.id
-    const gameCollector = this.message.channel.createMessageCollector(gameFilter);
+    this.message.channel.send({embeds: [que]})
+    const gameFilter = m => m.author.id === this.message.author.id
+    const gameCollector = this.message.channel.createMessageCollector({gameFilter});
 
     gameCollector.on('collect', async msg => {
       if(msg.author.bot) return
           const selection = msg.content.toLowerCase();
 if (selection === data.brand.toLowerCase()) {
-this.message.reply(right)
+this.message.channel.send({embeds: [right]})
 gameCollector.stop()
           }else if (selection === this.stopCommand) {
-            this.message.channel.send(wrong)
+            this.message.channel.send({embeds: [wrong]})
             gameCollector.stop();
           } else if (selection !== data.brand) {
-            this.message.channel.send(`Wrong Guess Try Again! - Type ${this.stopCommand} to cancel the Game`)
+            this.message.channel.send({ content: `Wrong Guess Try Again! - Type ${this.stopCommand} to cancel the Game`})
           }
     })
     
