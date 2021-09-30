@@ -1,602 +1,914 @@
-const Discord = require('discord.js')
+
+const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 
 class TicTacToe {
-    constructor() {
-        this.gameEmbed = null
+
+    /**
+   * @name TicTacToe
+   * @kind constructor
+   * @param {Object} options options
+   * @param {String} [options.xEmoji] x emoji
+   * @param {any} [options.message] the discord message
+   * @param {String} [options.xColor] x button color
+   * @param {String} [options.oEmoji] o emoji
+   * @param {String} [options.oColor] o button color
+   * @param {String} [options.embedDescription] embedDescription
+   * @param {any} [options.opponent] const opponent = <Message>.mentions.members.first() (NOT CHANGEABLE)
+   */
+
+    constructor(options) {
+        if (!options.xEmoji) throw new TypeError('Missing argument: xEmoji')
+        if (typeof options.xEmoji !== 'string') throw new TypeError('Error: xEmoji must be a string')
+
+        if (!options.oEmoji) throw new TypeError('Missing argument: oEmoji')
+        if (typeof options.oEmoji !== 'string') throw new TypeError('Error: oEmoji must be a string')
+
+        if (!options.xColor) throw new TypeError('Missing argument: xColor')
+        if (typeof options.xColor !== 'string') throw new TypeError('Error: xColor must be a string')
+
+        if (!options.oColor) throw new TypeError('Missing argument: oColor')
+        if (typeof options.oColor !== 'string') throw new TypeError('Error: oColor must be a string')
+
+        if (!options.opponent) throw new TypeError('Error: Missing argument opponent')
+
+        if (!options.message) throw new TypeError('Error: Missing argument message')
+
+        this.message = options.message;
+        this.xEmoji = options.xEmoji
+        this.oEmoji = options.oEmoji
+        this.opponent = options.opponent
+        this.xColor = options.xColor
+        this.oColor = options.oColor
+        this.embedDescription = options.embedDescription
     }
+    async start() {
+        let a1 = '⬜'
+        let a2 = '⬜'
+        let a3 = '⬜'
+        let b1 = '⬜'
+        let b2 = '⬜'
+        let b3 = '⬜'
+        let c1 = '⬜'
+        let c2 = '⬜'
+        let c3 = '⬜'
 
-    startGame(msg) {
-
-        let opponent = msg.mentions.users.first();
-        if (!opponent) return msg.channel.send(`**Who do you wanna play TicTacToe with?(you have to tag the person you want to play with after the command.)**`)
-
-        this.gameAuthor = msg.author
-        this.gameOpp = opponent
-
-        let board = [
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-            ["⚪", "1️⃣", "⚪", "⚫", "⚪", "2️⃣", "⚪", "⚫", "⚪", "3️⃣", "⚪"],
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-            ["⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫"],
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-            ["⚪", "4️⃣", "⚪", "⚫", "⚪", "5️⃣", "⚪", "⚫", "⚪", "6️⃣", "⚪"],
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-            ["⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫", "⚫"],
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-            ["⚪", "7️⃣", "⚪", "⚫", "⚪", "8️⃣", "⚪", "⚫", "⚪", "9️⃣", "⚪"],
-            ["⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪", "⚫", "⚪", "⚪", "⚪"],
-        ];
-
-        let renderBoard = (board) => {
-            let tempString = "";
-            for (let boardSection of board) {
-                tempString += `${boardSection.join("")}\n`;
+        function getRandomString(length) {
+            var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var result = '';
+            for (var i = 0; i < length; i++) {
+                result += randomChars.charAt(Math.floor(Math.random() * randomChars.length))
             }
-            return tempString;
+            return result
         }
+        let a11 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let a22 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let a33 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let b11 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let b22 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let b33 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let c11 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let c22 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
+        let c33 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
 
-        const initialState = renderBoard(board);
+        let player = 0;
+        const author = this.message.author.id
+        const member = this.opponent
+        const authorName = this.message.author.username
 
-        let embed = new Discord.MessageEmbed()
-            .setColor("RANDOM")
-            .setTitle(`❌ - it's your turn ${msg.author.username}!`)
-            .setDescription(initialState)
-            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-        msg.channel.send({ embeds: [embed] }).then(emsg => {
-            this.gameAuthor = msg.author
-            this.gameEmbed = emsg;
-            this.gameEmbed.react('1️⃣');
-            this.gameEmbed.react('2️⃣');
-            this.gameEmbed.react('3️⃣');
-            this.gameEmbed.react('4️⃣');
-            this.gameEmbed.react('5️⃣');
-            this.gameEmbed.react('6️⃣');
-            this.gameEmbed.react('7️⃣');
-            this.gameEmbed.react('8️⃣');
-            this.gameEmbed.react('9️⃣');
+        const midDuel = new Set()
 
-            const filter = (reaction, user) => ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'].includes(reaction.emoji.name) && (user.id === this.gameAuthor.id || user.id === this.gameOpp.id)
-
-            const gameCollector = this.gameEmbed.createReactionCollector({ filter: filter });
-
-            const gameData = [
-                { member: this.gameAuthor, playerColor: "❌" },
-                { member: this.gameOpp, playerColor: "🔵" }
+        if (midDuel.has(author)) {
+            return this.message.channel.send(`You're currently in a duel`)
+        } else if (midDuel.has(member.id)) {
+            return this.message.channel.send(`<@${member.id}> is currently in a duel`)
+        } if (member.id === this.message.client.user.id) {
+            return this.message.channel.send("You can't duel me lmfao")
+        }
+        const gameData = [
+            { member: this.message.author, em: this.xEmoji, color: this.xColor },
+            { member: member, em: this.oEmoji, color: this.oColor }
+        ];
+        let Embed = new MessageEmbed()
+            .setDescription(this.embedDescription || `🎮 ${authorName} VS ${this.opponent.username} 🎮`)
+            .setColor(3426654)
+        let A1 = new MessageButton()
+            .setCustomId(a11)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let A2 = new MessageButton()
+            .setCustomId(a22)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let A3 = new MessageButton()
+            .setCustomId(a33)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let B1 = new MessageButton()
+            .setCustomId(b11)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let B2 = new MessageButton()
+            .setCustomId(b22)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let B3 = new MessageButton()
+            .setCustomId(b33)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let C1 = new MessageButton()
+            .setCustomId(c11)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let C2 = new MessageButton()
+            .setCustomId(c22)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        let C3 = new MessageButton()
+            .setCustomId(c33)
+            .setStyle('SECONDARY')
+            .setLabel('~')
+        this.message.channel.send({
+            embeds: [Embed],
+            components: [
+                {
+                    type: 1, components: [
+                        A1, A2, A3
+                    ]
+                },
+                {
+                    type: 1, components: [
+                        B1, B2, B3
+                    ]
+                },
+                {
+                    type: 1, components: [
+                        C1, C2, C3
+                    ]
+                },
             ]
+        }).then(async (msg) => {
+            midDuel.add(author)
+            midDuel.add(member.id)
+            const gameFilter = m => m.user.id === this.message.author.id || m.user.id === this.opponent.id
 
-            let player = 0;
+            const gameCollector = msg.createMessageComponentCollector({ gameFilter, componentType: 'BUTTON' });
 
-            gameCollector.on("collect", async (reaction, user) => {
 
-                reaction.message.reactions.cache.get(reaction.emoji.name).users.remove(user.id);
 
-                if (user.id === gameData[player].member.id) {
+            gameCollector.on('collect', async btn => {
+                if (btn.customId == a11 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            a1 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
 
-                    reaction.message.reactions.cache.get(reaction.emoji.name).remove();
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
 
-                    switch (reaction.emoji.name) {
-
-                        case "1️⃣":
-                            board[0][0] = gameData[player].playerColor
-                            board[0][1] = gameData[player].playerColor
-                            board[0][2] = gameData[player].playerColor
-                            board[1][0] = gameData[player].playerColor
-                            board[1][1] = gameData[player].playerColor
-                            board[1][2] = gameData[player].playerColor
-                            board[2][0] = gameData[player].playerColor
-                            board[2][1] = gameData[player].playerColor
-                            board[2][2] = gameData[player].playerColor
-                            break;
-                        case "2️⃣":
-                            board[0][4] = gameData[player].playerColor
-                            board[0][5] = gameData[player].playerColor
-                            board[0][6] = gameData[player].playerColor
-                            board[1][4] = gameData[player].playerColor
-                            board[1][5] = gameData[player].playerColor
-                            board[1][6] = gameData[player].playerColor
-                            board[2][4] = gameData[player].playerColor
-                            board[2][5] = gameData[player].playerColor
-                            board[2][6] = gameData[player].playerColor
-                            break;
-                        case "3️⃣":
-                            board[0][8] = gameData[player].playerColor
-                            board[0][9] = gameData[player].playerColor
-                            board[0][10] = gameData[player].playerColor
-                            board[1][8] = gameData[player].playerColor
-                            board[1][9] = gameData[player].playerColor
-                            board[1][10] = gameData[player].playerColor
-                            board[2][8] = gameData[player].playerColor
-                            board[2][9] = gameData[player].playerColor
-                            board[2][10] = gameData[player].playerColor
-                            break;
-                        case "4️⃣":
-                            board[4][0] = gameData[player].playerColor
-                            board[4][1] = gameData[player].playerColor
-                            board[4][2] = gameData[player].playerColor
-                            board[5][0] = gameData[player].playerColor
-                            board[5][1] = gameData[player].playerColor
-                            board[5][2] = gameData[player].playerColor
-                            board[6][0] = gameData[player].playerColor
-                            board[6][1] = gameData[player].playerColor
-                            board[6][2] = gameData[player].playerColor
-                            break;
-                        case "5️⃣":
-                            board[4][4] = gameData[player].playerColor
-                            board[4][5] = gameData[player].playerColor
-                            board[4][6] = gameData[player].playerColor
-                            board[5][4] = gameData[player].playerColor
-                            board[5][5] = gameData[player].playerColor
-                            board[5][6] = gameData[player].playerColor
-                            board[6][4] = gameData[player].playerColor
-                            board[6][5] = gameData[player].playerColor
-                            board[6][6] = gameData[player].playerColor
-                            break;
-                        case "6️⃣":
-                            board[4][8] = gameData[player].playerColor
-                            board[4][9] = gameData[player].playerColor
-                            board[4][10] = gameData[player].playerColor
-                            board[5][8] = gameData[player].playerColor
-                            board[5][9] = gameData[player].playerColor
-                            board[5][10] = gameData[player].playerColor
-                            board[6][8] = gameData[player].playerColor
-                            board[6][9] = gameData[player].playerColor
-                            board[6][10] = gameData[player].playerColor
-                            break;
-                        case "7️⃣":
-                            board[8][0] = gameData[player].playerColor
-                            board[8][1] = gameData[player].playerColor
-                            board[8][2] = gameData[player].playerColor
-                            board[9][0] = gameData[player].playerColor
-                            board[9][1] = gameData[player].playerColor
-                            board[9][2] = gameData[player].playerColor
-                            board[10][0] = gameData[player].playerColor
-                            board[10][1] = gameData[player].playerColor
-                            board[10][2] = gameData[player].playerColor
-                            break;
-                        case "8️⃣":
-                            board[8][4] = gameData[player].playerColor
-                            board[8][5] = gameData[player].playerColor
-                            board[8][6] = gameData[player].playerColor
-                            board[9][4] = gameData[player].playerColor
-                            board[9][5] = gameData[player].playerColor
-                            board[9][6] = gameData[player].playerColor
-                            board[10][4] = gameData[player].playerColor
-                            board[10][5] = gameData[player].playerColor
-                            board[10][6] = gameData[player].playerColor
-                            break;
-                        case "9️⃣":
-                            board[8][8] = gameData[player].playerColor
-                            board[8][9] = gameData[player].playerColor
-                            board[8][10] = gameData[player].playerColor
-                            board[9][8] = gameData[player].playerColor
-                            board[9][9] = gameData[player].playerColor
-                            board[9][10] = gameData[player].playerColor
-                            board[10][8] = gameData[player].playerColor
-                            board[10][9] = gameData[player].playerColor
-                            board[10][10] = gameData[player].playerColor
-                            break;
-                    }
-
-                    if (board[0][0] === gameData[player].playerColor &&
-                        board[0][1] === gameData[player].playerColor &&
-                        board[0][2] === gameData[player].playerColor &&
-                        board[1][0] === gameData[player].playerColor &&
-                        board[1][1] === gameData[player].playerColor &&
-                        board[1][2] === gameData[player].playerColor &&
-                        board[2][0] === gameData[player].playerColor &&
-                        board[2][1] === gameData[player].playerColor &&
-                        board[2][2] === gameData[player].playerColor &&
-
-                        board[0][4] === gameData[player].playerColor &&
-                        board[0][5] === gameData[player].playerColor &&
-                        board[0][6] === gameData[player].playerColor &&
-                        board[1][4] === gameData[player].playerColor &&
-                        board[1][5] === gameData[player].playerColor &&
-                        board[1][6] === gameData[player].playerColor &&
-                        board[2][4] === gameData[player].playerColor &&
-                        board[2][5] === gameData[player].playerColor &&
-                        board[2][6] === gameData[player].playerColor &&
-
-                        board[0][8] === gameData[player].playerColor &&
-                        board[0][9] === gameData[player].playerColor &&
-                        board[0][10] === gameData[player].playerColor &&
-                        board[1][8] === gameData[player].playerColor &&
-                        board[1][9] === gameData[player].playerColor &&
-                        board[1][10] === gameData[player].playerColor &&
-                        board[2][8] === gameData[player].playerColor &&
-                        board[2][9] === gameData[player].playerColor &&
-                        board[2][10] === gameData[player].playerColor) {
-                        this.gameEmbed.reactions.removeAll()
-
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`)
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
-                    }
-
-                    if (board[4][0] === gameData[player].playerColor &&
-                        board[4][1] === gameData[player].playerColor &&
-                        board[4][2] === gameData[player].playerColor &&
-                        board[5][0] === gameData[player].playerColor &&
-                        board[5][1] === gameData[player].playerColor &&
-                        board[5][2] === gameData[player].playerColor &&
-                        board[6][0] === gameData[player].playerColor &&
-                        board[6][1] === gameData[player].playerColor &&
-                        board[6][2] === gameData[player].playerColor &&
-
-                        board[4][4] === gameData[player].playerColor &&
-                        board[4][5] === gameData[player].playerColor &&
-                        board[4][6] === gameData[player].playerColor &&
-                        board[5][4] === gameData[player].playerColor &&
-                        board[5][5] === gameData[player].playerColor &&
-                        board[5][6] === gameData[player].playerColor &&
-                        board[6][4] === gameData[player].playerColor &&
-                        board[6][5] === gameData[player].playerColor &&
-                        board[6][6] === gameData[player].playerColor &&
-
-                        board[4][8] === gameData[player].playerColor &&
-                        board[4][9] === gameData[player].playerColor &&
-                        board[4][10] === gameData[player].playerColor &&
-                        board[5][8] === gameData[player].playerColor &&
-                        board[5][9] === gameData[player].playerColor &&
-                        board[5][10] === gameData[player].playerColor &&
-                        board[6][8] === gameData[player].playerColor &&
-                        board[6][9] === gameData[player].playerColor &&
-                        board[6][10] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`)
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        A1 = new MessageButton()
+                            .setCustomId(a11)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
 
                     }
+                } else if (btn.customId == a22 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            a2 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
 
-                    if (board[8][0] === gameData[player].playerColor &&
-                        board[8][1] === gameData[player].playerColor &&
-                        board[8][2] === gameData[player].playerColor &&
-                        board[9][0] === gameData[player].playerColor &&
-                        board[9][1] === gameData[player].playerColor &&
-                        board[9][2] === gameData[player].playerColor &&
-                        board[10][0] === gameData[player].playerColor &&
-                        board[10][1] === gameData[player].playerColor &&
-                        board[10][2] === gameData[player].playerColor &&
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
 
-                        board[8][4] === gameData[player].playerColor &&
-                        board[8][5] === gameData[player].playerColor &&
-                        board[8][6] === gameData[player].playerColor &&
-                        board[9][4] === gameData[player].playerColor &&
-                        board[9][5] === gameData[player].playerColor &&
-                        board[9][6] === gameData[player].playerColor &&
-                        board[10][4] === gameData[player].playerColor &&
-                        board[10][5] === gameData[player].playerColor &&
-                        board[10][6] === gameData[player].playerColor &&
-
-                        board[8][8] === gameData[player].playerColor &&
-                        board[8][9] === gameData[player].playerColor &&
-                        board[8][10] === gameData[player].playerColor &&
-                        board[9][8] === gameData[player].playerColor &&
-                        board[9][9] === gameData[player].playerColor &&
-                        board[9][10] === gameData[player].playerColor &&
-                        board[10][8] === gameData[player].playerColor &&
-                        board[10][9] === gameData[player].playerColor &&
-                        board[10][10] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
-
-                    }
-
-                    if (board[0][0] === gameData[player].playerColor &&
-                        board[0][1] === gameData[player].playerColor &&
-                        board[0][2] === gameData[player].playerColor &&
-                        board[1][0] === gameData[player].playerColor &&
-                        board[1][1] === gameData[player].playerColor &&
-                        board[1][2] === gameData[player].playerColor &&
-                        board[2][0] === gameData[player].playerColor &&
-                        board[2][1] === gameData[player].playerColor &&
-                        board[2][2] === gameData[player].playerColor &&
-                        board[4][0] === gameData[player].playerColor &&
-                        board[4][1] === gameData[player].playerColor &&
-                        board[4][2] === gameData[player].playerColor &&
-                        board[5][0] === gameData[player].playerColor &&
-                        board[5][1] === gameData[player].playerColor &&
-                        board[5][2] === gameData[player].playerColor &&
-                        board[6][0] === gameData[player].playerColor &&
-                        board[6][1] === gameData[player].playerColor &&
-                        board[6][2] === gameData[player].playerColor &&
-                        board[8][0] === gameData[player].playerColor &&
-                        board[8][1] === gameData[player].playerColor &&
-                        board[8][2] === gameData[player].playerColor &&
-                        board[9][0] === gameData[player].playerColor &&
-                        board[9][1] === gameData[player].playerColor &&
-                        board[9][2] === gameData[player].playerColor &&
-                        board[10][0] === gameData[player].playerColor &&
-                        board[10][1] === gameData[player].playerColor &&
-                        board[10][2] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
-
-                    }
-
-                    if (board[0][4] === gameData[player].playerColor &&
-                        board[0][5] === gameData[player].playerColor &&
-                        board[0][6] === gameData[player].playerColor &&
-                        board[1][4] === gameData[player].playerColor &&
-                        board[1][5] === gameData[player].playerColor &&
-                        board[1][6] === gameData[player].playerColor &&
-                        board[2][4] === gameData[player].playerColor &&
-                        board[2][5] === gameData[player].playerColor &&
-                        board[2][6] === gameData[player].playerColor &&
-                        board[4][4] === gameData[player].playerColor &&
-                        board[4][5] === gameData[player].playerColor &&
-                        board[4][6] === gameData[player].playerColor &&
-                        board[5][4] === gameData[player].playerColor &&
-                        board[5][5] === gameData[player].playerColor &&
-                        board[5][6] === gameData[player].playerColor &&
-                        board[6][4] === gameData[player].playerColor &&
-                        board[6][5] === gameData[player].playerColor &&
-                        board[6][6] === gameData[player].playerColor &&
-                        board[8][4] === gameData[player].playerColor &&
-                        board[8][5] === gameData[player].playerColor &&
-                        board[8][6] === gameData[player].playerColor &&
-                        board[9][4] === gameData[player].playerColor &&
-                        board[9][5] === gameData[player].playerColor &&
-                        board[9][6] === gameData[player].playerColor &&
-                        board[10][4] === gameData[player].playerColor &&
-                        board[10][5] === gameData[player].playerColor &&
-                        board[10][6] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        A2 = new MessageButton()
+                            .setCustomId(a22)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
 
                     }
+                } else if (btn.customId == a33 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            a3 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
 
-                    if (board[0][8] === gameData[player].playerColor &&
-                        board[0][9] === gameData[player].playerColor &&
-                        board[0][10] === gameData[player].playerColor &&
-                        board[1][8] === gameData[player].playerColor &&
-                        board[1][9] === gameData[player].playerColor &&
-                        board[1][10] === gameData[player].playerColor &&
-                        board[2][8] === gameData[player].playerColor &&
-                        board[2][9] === gameData[player].playerColor &&
-                        board[2][10] === gameData[player].playerColor &&
-                        board[4][8] === gameData[player].playerColor &&
-                        board[4][9] === gameData[player].playerColor &&
-                        board[4][10] === gameData[player].playerColor &&
-                        board[5][8] === gameData[player].playerColor &&
-                        board[5][9] === gameData[player].playerColor &&
-                        board[5][10] === gameData[player].playerColor &&
-                        board[6][8] === gameData[player].playerColor &&
-                        board[6][9] === gameData[player].playerColor &&
-                        board[6][10] === gameData[player].playerColor &&
-                        board[8][8] === gameData[player].playerColor &&
-                        board[8][9] === gameData[player].playerColor &&
-                        board[8][10] === gameData[player].playerColor &&
-                        board[9][8] === gameData[player].playerColor &&
-                        board[9][9] === gameData[player].playerColor &&
-                        board[9][10] === gameData[player].playerColor &&
-                        board[10][8] === gameData[player].playerColor &&
-                        board[10][9] === gameData[player].playerColor &&
-                        board[10][10] === gameData[player].playerColor) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
 
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
-
-                    }
-
-                    if (board[0][0] === gameData[player].playerColor &&
-                        board[0][1] === gameData[player].playerColor &&
-                        board[0][2] === gameData[player].playerColor &&
-                        board[1][0] === gameData[player].playerColor &&
-                        board[1][1] === gameData[player].playerColor &&
-                        board[1][2] === gameData[player].playerColor &&
-                        board[2][0] === gameData[player].playerColor &&
-                        board[2][1] === gameData[player].playerColor &&
-                        board[2][2] === gameData[player].playerColor &&
-                        board[4][4] === gameData[player].playerColor &&
-                        board[4][5] === gameData[player].playerColor &&
-                        board[4][6] === gameData[player].playerColor &&
-                        board[5][4] === gameData[player].playerColor &&
-                        board[5][5] === gameData[player].playerColor &&
-                        board[5][6] === gameData[player].playerColor &&
-                        board[6][4] === gameData[player].playerColor &&
-                        board[6][5] === gameData[player].playerColor &&
-                        board[6][6] === gameData[player].playerColor &&
-                        board[8][8] === gameData[player].playerColor &&
-                        board[8][9] === gameData[player].playerColor &&
-                        board[8][10] === gameData[player].playerColor &&
-                        board[9][8] === gameData[player].playerColor &&
-                        board[9][9] === gameData[player].playerColor &&
-                        board[9][10] === gameData[player].playerColor &&
-                        board[10][8] === gameData[player].playerColor &&
-                        board[10][9] === gameData[player].playerColor &&
-                        board[10][10] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
-
-                    }
-
-                    if (board[0][8] === gameData[player].playerColor &&
-                        board[0][9] === gameData[player].playerColor &&
-                        board[0][10] === gameData[player].playerColor &&
-                        board[1][8] === gameData[player].playerColor &&
-                        board[1][9] === gameData[player].playerColor &&
-                        board[1][10] === gameData[player].playerColor &&
-                        board[2][8] === gameData[player].playerColor &&
-                        board[2][9] === gameData[player].playerColor &&
-                        board[2][10] === gameData[player].playerColor &&
-                        board[4][4] === gameData[player].playerColor &&
-                        board[4][5] === gameData[player].playerColor &&
-                        board[4][6] === gameData[player].playerColor &&
-                        board[5][4] === gameData[player].playerColor &&
-                        board[5][5] === gameData[player].playerColor &&
-                        board[5][6] === gameData[player].playerColor &&
-                        board[6][4] === gameData[player].playerColor &&
-                        board[6][5] === gameData[player].playerColor &&
-                        board[6][6] === gameData[player].playerColor &&
-                        board[8][0] === gameData[player].playerColor &&
-                        board[8][1] === gameData[player].playerColor &&
-                        board[8][2] === gameData[player].playerColor &&
-                        board[9][0] === gameData[player].playerColor &&
-                        board[9][1] === gameData[player].playerColor &&
-                        board[9][2] === gameData[player].playerColor &&
-                        board[10][0] === gameData[player].playerColor &&
-                        board[10][1] === gameData[player].playerColor &&
-                        board[10][2] === gameData[player].playerColor) {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`${gameData[player].member.username} has won the game!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        A3 = new MessageButton()
+                            .setCustomId(a33)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
 
                     }
+                } else if (btn.customId == b11 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
 
-                    if (board[0][0] !== '⚪' &&
-                        board[0][1] !== '⚪' &&
-                        board[0][2] !== '⚪' &&
-                        board[1][0] !== '⚪' &&
-                        board[1][1] !== '1️⃣' &&
-                        board[1][2] !== '⚪' &&
-                        board[2][0] !== '⚪' &&
-                        board[2][1] !== '⚪' &&
-                        board[2][2] !== '⚪' &&
+                        try {
+                            b1 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
 
-                        board[0][4] !== '⚪' &&
-                        board[0][5] !== '⚪' &&
-                        board[0][6] !== '⚪' &&
-                        board[1][4] !== '⚪' &&
-                        board[1][5] !== '2️⃣' &&
-                        board[1][6] !== '⚪' &&
-                        board[2][4] !== '⚪' &&
-                        board[2][5] !== '⚪' &&
-                        board[2][6] !== '⚪' &&
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
 
-                        board[0][8] !== '⚪' &&
-                        board[0][9] !== '⚪' &&
-                        board[0][10] !== '⚪' &&
-                        board[1][8] !== '⚪' &&
-                        board[1][9] !== '3️⃣' &&
-                        board[1][10] !== '⚪' &&
-                        board[2][8] !== '⚪' &&
-                        board[2][9] !== '⚪' &&
-                        board[2][10] !== '⚪' &&
-
-                        board[4][0] !== '⚪' &&
-                        board[4][1] !== '⚪' &&
-                        board[4][2] !== '⚪' &&
-                        board[5][0] !== '⚪' &&
-                        board[5][1] !== '4️⃣' &&
-                        board[5][2] !== '⚪' &&
-                        board[6][0] !== '⚪' &&
-                        board[6][1] !== '⚪' &&
-                        board[6][2] !== '⚪' &&
-
-                        board[4][4] !== '⚪' &&
-                        board[4][5] !== '⚪' &&
-                        board[4][6] !== '⚪' &&
-                        board[5][4] !== '⚪' &&
-                        board[5][5] !== '5️⃣' &&
-                        board[5][6] !== '⚪' &&
-                        board[6][4] !== '⚪' &&
-                        board[6][5] !== '⚪' &&
-                        board[6][6] !== '⚪' &&
-
-                        board[4][8] !== '⚪' &&
-                        board[4][9] !== '⚪' &&
-                        board[4][10] !== '⚪' &&
-                        board[5][8] !== '⚪' &&
-                        board[5][9] !== '6️⃣' &&
-                        board[5][10] !== '⚪' &&
-                        board[6][8] !== '⚪' &&
-                        board[6][9] !== '⚪' &&
-                        board[6][10] !== '⚪' &&
-
-                        board[8][0] !== '⚪' &&
-                        board[8][1] !== '⚪' &&
-                        board[8][2] !== '⚪' &&
-                        board[9][0] !== '⚪' &&
-                        board[9][1] !== '7️⃣' &&
-                        board[9][2] !== '⚪' &&
-                        board[10][0] !== '⚪' &&
-                        board[10][1] !== '⚪' &&
-                        board[10][2] !== '⚪' &&
-
-                        board[8][4] !== '⚪' &&
-                        board[8][5] !== '⚪' &&
-                        board[8][6] !== '⚪' &&
-                        board[9][4] !== '⚪' &&
-                        board[9][5] !== '8️⃣' &&
-                        board[9][6] !== '⚪' &&
-                        board[10][4] !== '⚪' &&
-                        board[10][5] !== '⚪' &&
-                        board[10][6] !== '⚪' &&
-
-                        board[8][8] !== '⚪' &&
-                        board[8][9] !== '⚪' &&
-                        board[8][10] !== '⚪' &&
-                        board[9][8] !== '⚪' &&
-                        board[9][9] !== '9️⃣' &&
-                        board[9][10] !== '⚪' &&
-                        board[10][8] !== '⚪' &&
-                        board[10][9] !== '⚪' &&
-                        board[10][10] !== '⚪') {
-
-                        this.gameEmbed.reactions.removeAll()
-                        const WinEmbed = new Discord.MessageEmbed()
-                            .setTitle(`Draw! Nobody won`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                        gameCollector.stop(`${gameData[player].member.id} won`);
-                        return this.gameEmbed.edit({ embeds: [WinEmbed] })
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        B1 = new MessageButton()
+                            .setCustomId(b11)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
 
                     }
+                } else if (btn.customId == b22 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            b2 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
 
-                    player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
 
-                    const newEmbed = new Discord.MessageEmbed()
-                        .setTitle(`${gameData[player].playerColor} - It's your turn, ${gameData[player].member.username}!`)
-                        .setDescription(renderBoard(board))
-                        .setFooter(`${msg.author.username} vs ${opponent.username}`)
-                    this.gameEmbed.edit({ embeds: [newEmbed] });
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        B2 = new MessageButton()
+                            .setCustomId(b22)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
+
+                    }
+                } else if (btn.customId == b33 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            b3 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        B3 = new MessageButton()
+                            .setCustomId(b33)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
+
+                    }
+                } else if (btn.customId == c11 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            c1 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        C1 = new MessageButton()
+                            .setCustomId(c11)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
+
+                    }
+                } else if (btn.customId == c22 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            c2 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        C2 = new MessageButton()
+                            .setCustomId(c22)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
+
+                    }
+                } else if (btn.customId == c33 && gameData[player].member.id === btn.user.id) {
+                    btn.deferUpdate()
+                    if (btn.label == this.oEmoji || btn.label == this.xEmoji) { // User tries to place at an already claimed spot
+                        btn.reply('That spot is already occupied.')
+                    } else {
+                        try {
+                            c3 = gameData[player].em
+                            if (a1 == this.xEmoji && b1 == this.xEmoji && c1 == this.xEmoji || a1 == this.oEmoji && b1 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a2 == this.xEmoji && b2 == this.xEmoji && c2 == this.xEmoji || a2 == this.oEmoji && b2 == this.oEmoji && c2 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b3 == this.xEmoji && c3 == this.xEmoji || a3 == this.oEmoji && b3 == this.oEmoji && c3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && a2 == this.xEmoji && a3 == this.xEmoji || a1 == this.oEmoji && a2 == this.oEmoji && a3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (b1 == this.xEmoji && b2 == this.xEmoji && b3 == this.xEmoji || b1 == this.oEmoji && b2 == this.oEmoji && b3 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (c1 == this.xEmoji && c2 == this.xEmoji && c3 == this.xEmoji || c1 == this.oEmoji && c2 == this.oEmoji && c3 == this.oEmoji) {
+                                player = (player + 1) % 2;
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 == this.xEmoji && b2 == this.xEmoji && c3 == this.xEmoji || a1 == this.oEmoji && b2 == this.oEmoji && c3 == this.oEmoji) {
+
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a3 == this.xEmoji && b2 == this.xEmoji && c1 == this.xEmoji || a3 == this.oEmoji && b2 == this.oEmoji && c1 == this.oEmoji) {
+                                this.message.channel.send(`${gameData[player].member} wins!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            } else if (a1 !== '⬜' && a2 !== '⬜' && a3 !== '⬜' && b1 !== '⬜' && b2 !== '⬜' && b3 !== '⬜' && c1 !== '⬜' && c2 !== '⬜' && c3 !== '⬜') {
+                                this.message.channel.send(`Tie!`)
+                                gameCollector.stop()
+                                midDuel.delete(author)
+                                midDuel.delete(member.id)
+                            }
+                        } catch (e) {
+                            console.log(e)
+                        }
+                        player = (player + 1) % 2;
+                        C3 = new MessageButton()
+                            .setCustomId(c33)
+                            .setStyle(gameData[player].color)
+                            .setEmoji(gameData[player].em)
+                            .setDisabled()
+                        msg.edit({
+                            embeds: [Embed],
+                            components: [
+                                {
+                                    type: 1, components: [
+                                        A1, A2, A3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        B1, B2, B3
+                                    ]
+                                },
+                                {
+                                    type: 1, components: [
+                                        C1, C2, C3
+                                    ]
+                                },
+                            ]
+                        })
+                    }
+                } else {
+                    return btn.reply({ content: "Wait for Opponent!", ephemeral: true })
                 }
+
+
             })
-        });
+
+        })
     }
+
 }
 
 module.exports = TicTacToe;

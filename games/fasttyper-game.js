@@ -4,11 +4,13 @@ const possible_words = ["medicine", "situation", "hall", "desk", "hotel", "presi
 
 class fastTyper {
 
-    constructor() {
+    constructor(options) {
+        if (!options.message) throw new TypeError('Missing argument: message')
         this.word = ""
+        this.message = options.message
     }
 
-    startGame(msg) {
+    start() {
 
         let word = possible_words[Math.floor(Math.random() * possible_words.length)]
 
@@ -18,11 +20,11 @@ class fastTyper {
             .setDescription(`**Choosing a word...**`)
             .setTimestamp()
 
-        msg.channel.send({ embeds: [beginEmbed] }).then(emsg => {
-            
+        this.message.channel.send({ embeds: [beginEmbed] }).then(emsg => {
+
             const filter = m => m.content.toLowerCase().startsWith(word)
-            msg.channel.awaitMessages({filter, max: 1, time: 60000 })
-            .then(async collected => {
+            this.message.channel.awaitMessages({ filter, max: 1, time: 60000 })
+                .then(async collected => {
 
                     let firstCollected = collected.first().content
 

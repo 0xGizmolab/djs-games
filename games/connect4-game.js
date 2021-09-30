@@ -2,16 +2,20 @@ const discord = require('discord.js')
 
 class ConnectFour {
 
-    constructor() {
+    constructor(options) {
+        if (!options.message) throw new TypeError('Missing argument: message')
         this.gameEmbed = null
+        this.message = options.message
+        this.player1 = options.player1 || '🔴'
+        this.player2 = options.player2 || '🟡'
     }
 
-    startGame(msg) {
+    start() {
 
-        const challenger = msg.author;
-        const oppenent = msg.mentions.users.first();
+        const challenger = this.message.author;
+        const oppenent = this.message.mentions.users.first();
 
-        if (!oppenent) return msg.channel.send(`**Who do you wanna play Connect Four with?(Mention the person with the command.**`)
+        if (!oppenent) return this.message.channel.send(`**Who do you wanna play Connect Four with?(Mention the person with the command.**`)
 
         const board = [
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -35,10 +39,10 @@ class ConnectFour {
         const initialState = renderBoard(board);
 
         const initial = new discord.MessageEmbed()
-            .setTitle(`🔴 It's your turn, ${msg.author.username}!`)
+            .setTitle(`${this.player1} It's your turn, ${this.message.author.username}!`)
             .setDescription(initialState)
             .setFooter(`${challenger.username} vs ${oppenent.username}`)
-        msg.channel.send({ embeds: [initial] }).then(gameMessage => {
+        this.message.channel.send({ embeds: [initial] }).then(gameMessage => {
 
             gameMessage.react("1️⃣")
             gameMessage.react("2️⃣")
@@ -53,8 +57,8 @@ class ConnectFour {
             const gameCollector = gameMessage.createReactionCollector({ filter: gameFilter });
 
             const gameData = [
-                { member: challenger, playerColor: "🔴" },
-                { member: oppenent, playerColor: "🟡" }
+                { member: challenger, playerColor: this.player1 },
+                { member: oppenent, playerColor: this.player2 }
             ]
 
             let player = 0;
@@ -130,49 +134,49 @@ class ConnectFour {
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][0] === "⚪") openSpaces.push({ i, j: 0 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "2️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][1] === "⚪") openSpaces.push({ i, j: 1 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "3️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][2] === "⚪") openSpaces.push({ i, j: 2 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "4️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][3] === "⚪") openSpaces.push({ i, j: 3 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "5️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][4] === "⚪") openSpaces.push({ i, j: 4 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "6️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][5] === "⚪") openSpaces.push({ i, j: 5 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                         case "7️⃣":
                             for (let i = 5; i > -1; i--) {
                                 if (board[i][6] === "⚪") openSpaces.push({ i, j: 6 });
                             }
-                            if (openSpaces.length == 0) return msg.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
+                            if (openSpaces.length == 0) return this.message.channel.send(`**${gameData[player].member}, that column is already full. Choose another one**`).then(msg1 => msg1.delete({ timeout: 10000 }))
                             else board[openSpaces[0].i][openSpaces[0].j] = gameData[player].playerColor;
                             break;
                     }
