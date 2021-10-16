@@ -1,6 +1,6 @@
 const { random } = require("random-unicode-emoji")
 const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js")
-let emojiUsed = []
+
 let emojiChoosen;
 
 class findEmoji {
@@ -12,13 +12,15 @@ class findEmoji {
     this.winMessage = options.winMessage ? options.winMessage : "WoW! You won."
     this.loseMessage = options.loseMessage ? options.loseMessage : "Oops! thats wrong."
     this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Timeout :()"
+
+    this.emojiUsed = []
   }
 
   //Start Game
 
   async start(){
 
-    let buttons = createButtons()  
+    let buttons = createButtons(this.emojiUsed)  
       
     let msg = await this.message.channel.send({content:"here's your board i will edit buttons after 5 sec...", components: [
       {
@@ -49,12 +51,13 @@ class findEmoji {
 
 
     setTimeout(async() => {
-      await editButtons(msg, this.message, this.winMessage, this.loseMessage, this.timeOutMessage)
+      await editButtons(msg, this.message, this.winMessage, this.loseMessage, this.timeOutMessage, this.emojiUsed)
+      console.log(this.emojiUsed)
     }, 5000)
   }
 }
 
-function createButtons(){
+function createButtons(emojiUsed){
   let buttons = []
   
   for(let i = 0; i < 9; i++){
@@ -72,7 +75,7 @@ function createButtons(){
   return buttons;
 }
 
-async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage) {
+async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage, emojiUsed) {
   const buttons = []
 
   msg.components.map(c => {
