@@ -1,6 +1,5 @@
 const { random } = require("random-unicode-emoji")
 const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js")
-const prettyMilliseconds = require('pretty-ms');
 
 let emojiChoosen;
 
@@ -94,7 +93,7 @@ async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage
   emojiChoosen = emoji
 
   await msg.edit({
-    content: `Find \\${emoji} | You have just ${prettyMilliseconds(this.timeoutTime)}`, components: [
+    content: `Find \\${emoji} | Before the Time Runs Out`, components: [
       {
         type: 1,
         components: [
