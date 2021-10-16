@@ -22,7 +22,7 @@ class fastTyper {
 
         this.message.channel.send({ embeds: [beginEmbed] }).then(emsg => {
 
-            const filter = m => m.content.toLowerCase().startsWith(word)
+            const filter = m => (m.content.toLowerCase() === word)
             this.message.channel.awaitMessages({ filter, max: 1, time: 60000 })
                 .then(async collected => {
 

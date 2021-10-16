@@ -22,7 +22,7 @@ class RockPaperScissors {
 
         var challenger = this.message.author;
         var opponent = this.message.mentions.users.first()
-        if (!opponent) return message.channel.send(`**Who do you wanna play Rock Paper Scissors with?(You have to tag the person with the command)**`)
+        if (!opponent) return this.message.channel.send(`**Who do you wanna play Rock Paper Scissors with?(You have to tag the person with the command)**`)
 
         this.message.channel.send(`**${challenger.username} and ${opponent.username}, take a look in your DM's to play the RPS game!**`)
 
