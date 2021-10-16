@@ -52,7 +52,6 @@ class findEmoji {
 
     setTimeout(async() => {
       await editButtons(msg, this.message, this.winMessage, this.loseMessage, this.timeOutMessage, this.emojiUsed)
-      console.log(this.emojiUsed)
     }, 5000)
   }
 }
