@@ -128,8 +128,90 @@ async function handleGame(msg, message, winMessage, loseMessage, timeOutMessage)
 msg.awaitMessageComponent({ filter, componentType: 'BUTTON', time: 60000 })
 	.then(interaction => {
     if(interaction.customId === `${emojiChoosen}`){
+      const buttons = []
+
+  msg.components.map(c => {
+      c.components.map(c => {
+        if(c.customId === interaction.customId && c.customId === `${emojiChoosen}`) {
+          c.style = "SUCCESS"
+        }
+        
+        c.label = c.customId
+
+        buttons.push(c)
+      })
+  })
+
+      msg.edit({components: [
+      {
+        type: 1,
+        components: [
+          buttons[0],
+          buttons[1],
+          buttons[2]
+        ]
+      },
+      {
+        type: 1,
+        components: [
+          buttons[3],
+          buttons[4],
+          buttons[5],
+        ]
+      },
+      {
+        type: 1,
+        components: [
+          buttons[6],
+          buttons[7],
+          buttons[8]
+        ]
+      }
+    ]})
+      
       interaction.reply(winMessage)
     } else {
+      const buttons = []
+
+  msg.components.map(c => {
+      c.components.map(c => {
+        if(c.customId === interaction.customId) {
+          c.style = "DANGER"
+        }
+        
+        c.label = c.customId
+
+        buttons.push(c)
+      })
+  })
+
+      msg.edit({components: [
+      {
+        type: 1,
+        components: [
+          buttons[0],
+          buttons[1],
+          buttons[2]
+        ]
+      },
+      {
+        type: 1,
+        components: [
+          buttons[3],
+          buttons[4],
+          buttons[5],
+        ]
+      },
+      {
+        type: 1,
+        components: [
+          buttons[6],
+          buttons[7],
+          buttons[8]
+        ]
+      }
+    ]})
+
       interaction.reply(loseMessage)
     }
   })
