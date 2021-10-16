@@ -18,6 +18,8 @@ module.exports.GTL = require('./games/guessTheLogo-game')
 
 module.exports.GTF = require('./games/guessTheFlag-game')
 
+module.exports.FindEmoji = require('./games/findEmoji-game')
+
 
 
 
