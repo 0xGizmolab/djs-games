@@ -1,5 +1,6 @@
 const { random } = require("random-unicode-emoji")
 const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js")
+const prettyMilliseconds = require('pretty-ms');
 
 let emojiChoosen;
 
@@ -7,13 +8,13 @@ class FindEmoji {
   constructor(options) {
     if (!options.message) throw new TypeError('Missing argument: message')
 
-    if (typeof options.timoutTime !== 'number') throw new TypeError('Error: timeoutTime must be a number')
+    if (typeof options.timeoutTime !== 'number') throw new TypeError('Error: timeoutTime must be a number')
 
     this.message = options.message
     this.winMessage = options.winMessage ? options.winMessage : "WoW! You won."
     this.loseMessage = options.loseMessage ? options.loseMessage : "Oops! thats wrong."
     this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Timeout :()"
-    this.timoutTime = options.timoutTime ? options.timoutTime : 60000
+    this.timeoutTime = options.timeoutTime ? options.timeoutTime : 60000
     this.emojiUsed = []
   }
 
@@ -93,7 +94,7 @@ async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage
   emojiChoosen = emoji
 
   await msg.edit({
-    content: `Find \\${emoji} | You have just ${millisToMinutesAndSeconds(this.timoutTime)}`, components: [
+    content: `Find \\${emoji} | You have just ${prettyMilliseconds(this.timeoutTime)}`, components: [
       {
         type: 1,
         components: [
@@ -130,7 +131,7 @@ async function handleGame(msg, message, winMessage, loseMessage, timeOutMessage)
     return i.user.id === message.author.id
   }
 
-  msg.awaitMessageComponent({ filter, componentType: 'BUTTON', time: this.timoutTime })
+  msg.awaitMessageComponent({ filter, componentType: 'BUTTON', time: this.timeoutTime })
     .then(interaction => {
       if (interaction.customId === `${emojiChoosen}`) {
         const buttons = []
@@ -231,14 +232,6 @@ async function handleGame(msg, message, winMessage, loseMessage, timeOutMessage)
       })
     })
 }
-function millisToMinutesAndSeconds(millis) {
-  var minutes = Math.floor(millis / 60000);
-  var seconds = ((millis % 60000) / 1000).toFixed(0);
-  return (
-    seconds == 60 ?
-      (minutes + 1) + ":00" :
-      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-  );
-}
+
 
 module.exports = FindEmoji
