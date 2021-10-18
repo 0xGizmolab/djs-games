@@ -1,351 +1,200 @@
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js')
 
 class RockPaperScissors {
 
     constructor(options) {
 
         if (!options.message) throw new TypeError('Missing argument: message')
-        /*
-                if (typeof options.winFooter !== 'string') throw new TypeError('embedFooter must be a string')
-                if (typeof options.winColor !== 'string') throw new TypeError('embedColor must be a string')
         
-                if (typeof options.lostFooter !== 'string') throw new TypeError('embedFooter must be a string')
-                if (typeof options.lostColor !== 'string') throw new TypeError('embedColor must be a string')
-        
-                if (typeof options.questionFooter !== 'string') throw new TypeError('embedFooter must be a string')
-                if (typeof options.questionColor !== 'string') throw new TypeError('embedColor must be a string')
-                */
+
+
+        this.winMessage = options.Winmessage ? options.winMessage : "{winner} is the winner!"
+        this.AI = options.AI ? options.AI : true
         this.message = options.message;
+        this.opponent = options.opponent || this.message.mentions.members.first()
+        this.embedColor = options.embedColor ? options.embedColor : "RANDOM"
+      this.tieMessage = options.tieMessage ? options.tieMessage : "Its a tie." 
+      this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Times Up!"
 
     }
-    start = async () => {
 
-        var challenger = this.message.author;
-        var opponent = this.message.mentions.users.first()
-        if (!opponent) return this.message.channel.send(`**Who do you wanna play Rock Paper Scissors with?(You have to tag the person with the command)**`)
+  async start() {
+    let player1Choosed;
+    let player2Choosed;
+    let winner;      
+    
+    let button1 = new MessageButton()
+    .setLabel("🪨")
+    .setCustomId("rock")
+    .setStyle("PRIMARY")
 
-        this.message.channel.send(`**${challenger.username} and ${opponent.username}, take a look in your DM's to play the RPS game!**`)
+    let button2 = new MessageButton()
+    .setLabel("🧻")
+    .setCustomId("paper")
+    .setStyle("PRIMARY")
 
-        const startEmbed1 = new MessageEmbed()
-            .setTitle(`It's ${challenger.username}'s turn! Waiting...`)
-        var waitingEmoji = await opponent.send({ embeds: [startEmbed1] })
+    let button3 = new MessageButton()
+    .setLabel("✂️")
+    .setCustomId("scissors")
+    .setStyle("PRIMARY")
 
-        const startEmbed = new MessageEmbed()
-            .setTitle(`It's your turn, ${challenger.username}!`)
-            .setDescription(`What move will you make?
-        
-        🪨 = Rock
-        🧻 = Paper
-        ✂️ = Scissors`)
-        var startEmoji = await challenger.send({ embeds: [startEmbed] })
+    const row = new MessageActionRow().addComponents(button1, button2, button3)
 
-        await startEmoji.react('🪨')
-        await startEmoji.react('🧻')
-        await startEmoji.react('✂️')
-
-        const filter1 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === challenger.id;
-        const response1 = await startEmoji.awaitReactions({ filter: filter1, max: 1 });
-
-        const reaction1 = response1.first();
-
-        var cResult = "";
-        var oResult = "";
-
-        if (reaction1.emoji.name === "🪨") {
-
-            cResult = "rock"
-
-            const rockEmbed = new MessageEmbed()
-                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit({ embeds: [rockEmbed] })
-
-            const oppenentEmbed = new MessageEmbed()
-                .setTitle(`It's your turn, ${challenger.username}!`)
-                .setDescription(`What move will you make?
-        
-            🪨 = Rock
-            🧻 = Paper
-            ✂️ = Scissors`)
-            var endEmoji = await waitingEmoji.edit({ embeds: [oppenentEmbed] })
-
-            await endEmoji.react('🪨')
-            await endEmoji.react('🧻')
-            await endEmoji.react('✂️')
-
-            const filter2 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === opponent.id;
-            const response2 = await endEmoji.awaitReactions({ filter: filter2, max: 1 });
-
-            const reaction2 = response2.first();
-
-            if (reaction2.emoji.name === "🪨") {
-
-                oResult = "rock"
-
-                if (cResult === "rock") {
-                    if (oResult === "rock") {
-                        const drawEmbed = new MessageEmbed()
-                            .setColor("RANDOM")
-                            .setTitle(`Its a Draw!`)
-                            .setDescription(`You played: 🪨
-                        ${opponent.username} played: 🪨`)
-                        waitingEmoji1.edit({ embeds: [drawEmbed] })
-
-                        const drawEmbed1 = new MessageEmbed()
-                            .setColor("RANDOM")
-                            .setTitle(`Its a Draw!`)
-                            .setDescription(`You played: 🪨
-                        ${challenger.username} played: 🪨`)
-                        return endEmoji.edit({ embeds: [drawEmbed1] })
-                    } else if (oResult === "paper") {
-                        const loseEmbed = new MessageEmbed()
-                            .setColor("RANDOM")
-                            .setTitle(`${opponent.username} won!`)
-                            .setDescription(`You played: 🪨
-                        ${opponent.username} played: 🧻`)
-                        waitingEmoji1.edit({ embeds: [loseEmbed] })
-
-                        const winEmbed = new MessageEmbed()
-                            .setColor("RANDOM")
-                            .setTitle(`You won!`)
-                            .setDescription(`You played: 🧻
-                        ${challenger.username} played: 🪨`)
-                        return endEmoji.edit({ embeds: [winEmbed] })
-                    }
-                }
-
-            } else if (reaction2.emoji.name === "🧻") {
-
-                oResult = "paper"
-
-            } else if (reaction2.emoji.name === "✂️") {
-
-                oResult = "scissors"
+    if(!this.opponent && !this.AI) return this.message.channel.send("Mention the user you want to play with. ")
 
 
+    if(!this.opponent && this.AI){
 
-            }
+      let msg = await this.message.channel.send({embeds: [{
+       title: `${this.message.author.username} V/S AI`,
+       color: this.embedColor                                    }],    components: [row]})
 
-        } else if (reaction1.emoji.name === "🧻") {
+      
+      let filter = i => {return i.user.id === this.message.author.id}
 
-            cResult = "paper"
+      msg.awaitMessageComponent({filter, componentType: "BUTTON" , time: 60000, max: 1, errors: ["time"]}).then(interaction => {
+        let player1Choosed = interaction.customId
+          
+        let botChoosed = ["rock", "paper", "scissors"]
 
-            const paperEmbed = new MessageEmbed()
-                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit(paperEmbed)
-
-            const oppenentEmbed = new MessageEmbed()
-                .setTitle(`It's your turn, ${opponent.username}!`)
-                .setDescription(`What move will you make?
-        
-            🪨 = Rock
-            🧻 = Paper
-            ✂️ = Scissors`)
-            var endEmoji = await waitingEmoji.edit({ embeds: [oppenentEmbed] })
-
-            await endEmoji.react('🪨')
-            await endEmoji.react('🧻')
-            await endEmoji.react('✂️')
-
-            const filter2 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === opponent.id;
-            const response2 = await endEmoji.awaitReactions(filter2, { max: 1 });
-
-            const reaction2 = response2.first();
-
-            if (reaction2.emoji.name === "🪨") {
-
-                oResult = "rock"
-
-            } else if (reaction2.emoji.name === "🧻") {
-
-                oResult = "paper"
-
-            } else if (reaction2.emoji.name === "✂️") {
-
-                oResult = "scissors"
-
-
-
-            }
-
-        } else if (reaction1.emoji.name === "✂️") {
-
-            cResult = "scissors"
-
-            const scissorsEmbed = new MessageEmbed()
-                .setTitle(`It's ${opponent.username}'s turn! Waiting...`)
-            var waitingEmoji1 = await startEmoji.edit(scissorsEmbed)
-
-            const oppenentEmbed = new MessageEmbed()
-                .setTitle(`It's your turn, ${opponent.username}!`)
-                .setDescription(`What move will you make?
-        
-            🪨 = Rock
-            🧻 = Paper
-            ✂️ = Scissors`)
-            var endEmoji = await waitingEmoji.edit({ embeds: [oppenentEmbed] })
-
-            await endEmoji.react('🪨')
-            await endEmoji.react('🧻')
-            await endEmoji.react('✂️')
-
-            const filter2 = (reaction, user) => ["🪨", "🧻", "✂️"].includes(reaction.emoji.name) && user.id === opponent.id;
-            const response2 = await endEmoji.awaitReactions(filter2, { max: 1 });
-
-            const reaction2 = response2.first();
-
-            if (reaction2.emoji.name === "🪨") {
-
-                oResult = "rock"
-
-            } else if (reaction2.emoji.name === "🧻") {
-
-                oResult = "paper"
-
-            } else if (reaction2.emoji.name === "✂️") {
-
-                oResult = "scissors"
-
-            }
+         player2Choosed = botChoosed[Math.floor(Math.random() * botChoosed.length)]
+           
+        if(player1Choosed === "rock" && player2Choosed === "scissors"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "scissors" && player2Choosed === "paper"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "paper" && player2Choosed === "rock"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "paper" && player2Choosed === "scissors"){
+          winner = "AI"
+        }
+        if(player1Choosed === "scissors" && player2Choosed === "rock"){
+          winner = "AI"
+        }
+        if(player1Choosed === "rock" && player2Choosed === "paper"){
+          winner = "AI"
         }
 
-        if (cResult === "rock") {
-            if (oResult === "rock") {
-                const drawEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: 🪨
-                    ${opponent.username} played: 🪨`)
-                waitingEmoji1.edit({ embeds: [drawEmbed] })
+        if(winner === "AI"){
+          interaction.reply(this.winMessage.replace("{winner}", "AI"))
+            
+          msg.edit({embeds: [{
+            title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: AI`,
+            color: this.embedColor
+          }], 
+            components: []})
+          
+        } else if(winner === this.message.author.id){
+          interaction.reply(this.winMessage.replace("{winner}", this.message.author.username))
+            
+          msg.edit({embeds: [{
+             title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: ${this.message.author.username}`, 
+            color: this.embedColor}], 
+            components: []})
+          
+        } else {
+          interaction.reply(this.tieMessage)
+            
+          msg.edit({embeds: [{
+            title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: NoOne`, 
+            color: this.embedColor}], 
+            components: []})
+        }
+        
+      }).catch((e) => {
+        this.message.channel.send(this.timeOutMessage)
+        console.log(e)
+      })
+    } else if(this.opponent){
+      
+       let msg = await this.message.channel.send({embeds: [{
+       title: `${this.message.author.username} V/S ${this.opponent.user.username}`,
+       color: this.embedColor                                    }],    components: [row]})
 
-                const drawEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: 🪨
-                    ${challenger.username} played: 🪨`)
-                return endEmoji.edit({ embeds: [drawEmbed1] })
-            } else if (oResult === "paper") {
-                const loseEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${opponent.username} won!`)
-                    .setDescription(`You played: 🪨
-                    ${opponent.username} played: 🧻`)
-                waitingEmoji1.edit({ embeds: [loseEmbed] })
 
-                const winEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: 🧻
-                    ${challenger.username} played: 🪨`)
-                return endEmoji.edit({ embeds: [winEmbed] })
-            } else if (oResult === "scissors") {
+      const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON', time: 60000 });
 
-                const loseEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: 🪨
-                    ${opponent.username} played: ✂️`)
-                waitingEmoji1.edit({ embeds: [loseEmbed1] })
+      collector.on('collect', i => {
+	if (i.user.id === this.message.author.id || i.user.id === this.opponent.user.id) {
 
-                const winEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${challenger.username} won!`)
-                    .setDescription(`You played: ✂️
-                    ${challenger.username} played: 🪨`)
-                return endEmoji.edit({ embeds: [winEmbed1] })
-            }
-        } else if (cResult === "paper") {
-            if (oResult === "paper") {
-                const drawEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: 🧻
-                    ${opponent.username} played: 🧻`)
-                waitingEmoji1.edit({ embeds: [drawEmbed] })
+     if(i.user.id === this.message.author.id){
+       if(player1Choosed) return i.reply({content: "You have already chosen your answer.", ephemeral: true})
+       
+       player1Choosed = i.customId 
+       i.reply({content: `You choosed ${i.customId} `, ephemeral: true})
+     } else {
+       if(player2Choosed) return i.reply({content: "You have already chosen your answer.", ephemeral: true})
+       
+       player2Choosed = i.customId
+      i.reply({content: `You choosed ${i.customId}`, ephemeral: true})
+     }
 
-                const drawEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: 🧻
-                    ${challenger.username} played: 🧻`)
-                return endEmoji.edit({ embeds: [drawEmbed1] })
-            } else if (oResult === "rock") {
-                const loseEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: 🧻
-                    ${opponent.username} played: 🪨`)
-                waitingEmoji1.edit({ embeds: [loseEmbed] })
-
-                const winEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${challenger.username} won!`)
-                    .setDescription(`You played: 🪨
-                    ${challenger.username} played: 🧻`)
-                return endEmoji.edit({ embeds: [winEmbed] })
-            } else if (oResult === "scissors") {
-
-                const loseEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${opponent.username} won!`)
-                    .setDescription(`You played: 🧻
-                    ${opponent.username} played: ✂️`)
-                waitingEmoji1.edit({ embeds: [loseEmbed1] })
-
-                const winEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: ✂️
-                    ${challenger.username} played: 🧻`)
-                endEmoji.edit({ embeds: [winEmbed1] })
-            }
-        } else if (cResult === "scissors") {
-            if (oResult === "scissors") {
-                const drawEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: ✂️
-                    ${opponent.username} played: ✂️`)
-                waitingEmoji1.edit({ embeds: [drawEmbed] })
-
-                const drawEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`Its a Draw!`)
-                    .setDescription(`You played: ✂️
-                    ${challenger.username} played: ✂️`)
-                return endEmoji.edit({ embeds: [drawEmbed1] })
-            } else if (oResult === "paper") {
-                const loseEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: ✂️
-                    ${opponent.username} played: 🧻`)
-                waitingEmoji1.edit({ embeds: [loseEmbed] })
-
-                const winEmbed = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${challenger.username} won!`)
-                    .setDescription(`You played: 🧻 
-                    ${challenger.username} played: ✂️`)
-                return endEmoji.edit({ embeds: [winEmbed] })
-            } else if (oResult === "rock") {
-                const winEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`${challenger.username} won!`)
-                    .setDescription(`You played: ✂️
-                    ${challenger.username} played: 🪨`)
-                endEmoji.edit({ embeds: [winEmbed1] })
-
-                const loseEmbed1 = new MessageEmbed()
-                    .setColor("RANDOM")
-                    .setTitle(`You won!`)
-                    .setDescription(`You played: 🪨
-                    ${opponent.username} played: ✂️`)
-                return waitingEmoji1.edit({ embeds: [loseEmbed1] })
-            }
+    if(player1Choosed && player2Choosed){
+      if(player1Choosed === "rock" && player2Choosed === "scissors"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "scissors" && player2Choosed === "paper"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "paper" && player2Choosed === "rock"){
+          winner = this.message.author.id
+        }
+        if(player1Choosed === "paper" && player2Choosed === "scissors"){
+          winner = this.opponent.user.id
+        }
+        if(player1Choosed === "scissors" && player2Choosed === "rock"){
+          winner = this.opponent.user.id
+        }
+        if(player1Choosed === "rock" && player2Choosed === "paper"){
+          winner = this.opponent.user.id
         }
 
-
+        if(winner === this.opponent.user.id){
+          this.message.reply(this.winMessage.replace("{winner}", this.opponent.user.username))
+            
+          msg.edit({embeds: [{
+            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.opponent.user.username}`,
+            color: this.embedColor
+          }], 
+            components: []})
+          
+        } else if(winner === this.message.author.id){
+          this.message.reply(this.winMessage.replace("{winner}", this.message.author.username))
+            
+          msg.edit({embeds: [{
+            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.message.author.username}`,
+            color: this.embedColor
+          }], 
+            components: []})
+          
+        } else {
+          this.message.reply(this.tieMessage)
+            
+          msg.edit({embeds: [{
+            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: NoOne`,
+            color: this.embedColor
+          }], 
+            components: []})
+        }
     }
+	} else {
+		i.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+	}
+});
+
+collector.on('end', collected => {
+	    msg.edit({embeds: [{
+        title: "Game Ended", 
+        color: this.embedColor
+      }]})
+     })
+    
+  }
+    
+ }
 }
 
 module.exports = RockPaperScissors
