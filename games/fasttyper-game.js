@@ -52,7 +52,7 @@ class fastTyper {
         this.msg.reply({embeds: [this.embed]})
                 let filter = m => m.author.id === player.id
 
-        this.collector = this.message.channel.createMessageCollector({filter, time: 20000})
+        this.collector = this.message.channel.createMessageCollector({filter, time: this.maxTime})
                 this.collector.on("collect", async m => {
             if(m.content === "stop") {
                 return this.collector.stop()
