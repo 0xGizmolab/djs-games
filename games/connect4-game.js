@@ -28,11 +28,11 @@ class ConnectFour {
       
       if(this.slash) {
         challenger = this.message.user
-        oppenent = this.message.member.guild.members.cache.get(this.opponent).user
+        oppenent = this.opponent.user
         this.message.reply("Game Started.")
       } else {
         challenger = this.message.author
-        oppenent = this.opponent
+        oppenent = this.opponent.author
       }
       
         if (!oppenent) return this.message.channel.send(`**Opponent  is required option.**`)
