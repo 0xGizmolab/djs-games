@@ -30,6 +30,7 @@ class fastTyper {
 
         if(this.slash) {
             player = this.message.user
+            this.message.reply("Game Started!")
         } else {
             player = this.message.author
         }
