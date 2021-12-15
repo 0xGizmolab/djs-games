@@ -41,7 +41,7 @@ class fastTyper {
         .setTimestamp()
         .setDescription("Game will start in 5sec...")
 
-        this.msg = await this.message.reply({embeds: [this.embed]})
+        this.msg = await this.message.channel.send({embeds: [this.embed]})
 
         await sleep(5000)
 
