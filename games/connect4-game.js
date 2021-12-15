@@ -3,9 +3,15 @@ const { MessageEmbed } = require("discord.js")
 class ConnectFour {
 
     constructor(options) {
-        if (!options.message) throw new TypeError('Missing argument: message')
-        this.gameEmbed = null
-        this.message = options.message
+        if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
+
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
         this.player1 = options.player1 || '🔴'
         this.player2 = options.player2 || '🟡'
         this.embed = options.embed ? options.embed : {}
