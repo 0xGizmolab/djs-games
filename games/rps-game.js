@@ -3,20 +3,30 @@ const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js')
 class RockPaperScissors {
 
     constructor(options) {
-
-        if (!options.message) throw new TypeError('Missing argument: message')
         
+        if(options.slash) {
+            
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
 
+            this.message = options.interaction
+        } else {
+            
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
 
+            this.message = options.message
+        }
         this.winMessage = options.Winmessage ? options.winMessage : "{winner} is the winner!"
         this.AI = options.AI ? options.AI : true
-        this.message = options.message;
-        this.opponent = options.opponent || this.message.mentions.members.first()
-        this.embedColor = options.embedColor ? options.embedColor : "RANDOM"
-      this.tieMessage = options.tieMessage ? options.tieMessage : "Its a tie." 
-      this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Times Up!"
+        this.opponent = options.opponent
+        this.tieMessage = options.tieMessage ? options.tieMessage : "Its a tie." 
+        this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Times Up!"
+        this.rock = options.rock ? options.rock : "🪨"
+        this.paper = options.paper ? options.paper : "🧻"
+        this.scissor = options.scissor ? options.scissor : "✂️"
+        this.slash = options.slash ? options.slash : false
+        this.embed = options.embed ? options.embed : {}
 
-    }
+            }
 
   async start() {
     let player1Choosed;
@@ -24,33 +34,45 @@ class RockPaperScissors {
     let winner;      
     
     let button1 = new MessageButton()
-    .setLabel("🪨")
+    .setLabel(this.rock)
     .setCustomId("rock")
     .setStyle("PRIMARY")
 
     let button2 = new MessageButton()
-    .setLabel("🧻")
+    .setLabel(this.paper)
     .setCustomId("paper")
     .setStyle("PRIMARY")
 
     let button3 = new MessageButton()
-    .setLabel("✂️")
+    .setLabel(this.scissor)
     .setCustomId("scissors")
     .setStyle("PRIMARY")
 
     const row = new MessageActionRow().addComponents(button1, button2, button3)
 
-    if(!this.opponent && !this.AI) return this.message.channel.send("Mention the user you want to play with. ")
+    if(!this.opponent && !this.AI) return this.message.reply("Mention the user you want to play with. ")
 
 
-    if(!this.opponent && this.AI){
+    if(!this.opponent && this.AI) {
 
-      let msg = await this.message.channel.send({embeds: [{
-       title: `${this.message.author.username} V/S AI`,
-       color: this.embedColor                                    }],    components: [row]})
+        if(this.slash) {
+           this.player = this.message.user
+            this.message.reply("Game Started!")
+        } else {
+           this.player = this.message.author
+        }
+
+      this.embed = new MessageEmbed()
+        .setTitle(this.embed.title ? this.embed.title : `${this.player.username} v/s AI`)
+        .setDescription(this.embed.description ? this.embed.description : "Game Started!")
+        .setColor(this.embed.color ? this.embed.color : "RANDOM")
+        .setFooter(this.embed.footer ? this.embed.footer : "djs-games")
+        .setTimestamp()
+
+      let msg = await this.message.channel.send({ embeds: [this.embed], components: [row]})
 
       
-      let filter = i => {return i.user.id === this.message.author.id}
+      let filter = i => {return i.user.id === this.player.id}
 
       msg.awaitMessageComponent({filter, componentType: "BUTTON" , time: 60000, max: 1, errors: ["time"]}).then(interaction => {
         let player1Choosed = interaction.customId
@@ -60,13 +82,13 @@ class RockPaperScissors {
          player2Choosed = botChoosed[Math.floor(Math.random() * botChoosed.length)]
            
         if(player1Choosed === "rock" && player2Choosed === "scissors"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "scissors" && player2Choosed === "paper"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "paper" && player2Choosed === "rock"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "paper" && player2Choosed === "scissors"){
           winner = "AI"
@@ -81,27 +103,24 @@ class RockPaperScissors {
         if(winner === "AI"){
           interaction.reply(this.winMessage.replace("{winner}", "AI"))
             
-          msg.edit({embeds: [{
-            title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: AI`,
-            color: this.embedColor
-          }], 
-            components: []})
+       this.embed.setDescription(`Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: AI`)
+                                 
+         msg.edit({embeds: [this.embed], components: []})
           
-        } else if(winner === this.message.author.id){
-          interaction.reply(this.winMessage.replace("{winner}", this.message.author.username))
-            
-          msg.edit({embeds: [{
-             title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: ${this.message.author.username}`, 
-            color: this.embedColor}], 
-            components: []})
+        } else if(winner === this.player.id){
+          interaction.reply(this.winMessage.replace("{winner}", this.player.username))
+
+                            this.embed.setDescription(`Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: ${this.player.username}`)
+
+            msg.edit({embeds: [embed], components: []})
           
         } else {
           interaction.reply(this.tieMessage)
             
-          msg.edit({embeds: [{
-            title: `Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: NoOne`, 
-            color: this.embedColor}], 
-            components: []})
+        this.embed.setDescription(`Your Answer: ${player1Choosed}\nAI: ${player2Choosed}\n\nWinner: NoOne`)
+
+            msg.edit({embeds: [this.embed], 
+components: []})
         }
         
       }).catch((e) => {
@@ -109,18 +128,31 @@ class RockPaperScissors {
         console.log(e)
       })
     } else if(this.opponent){
-      
-       let msg = await this.message.channel.send({embeds: [{
-       title: `${this.message.author.username} V/S ${this.opponent.user.username}`,
-       color: this.embedColor                                    }],    components: [row]})
 
+        if(this.slash) {
+           this.player = this.message.user
+            this.message.reply("Game Started!")
+            this.opp = this.opponent.user
+        } else {
+           this.player = this.message.author
+           this.opp = this.message.guild.members.cache.get(this.opponent?.user ? this.opponent.user.id : this.opponent.author.id).user
+        }
+              
+       this.embed = new MessageEmbed()
+        .setTitle(this.embed.title ? this.embed.title : `${this.player.username} v/s ${this.opp.username}`)
+        .setDescription(this.embed.description ? this.embed.description : "Game Started!")
+        .setColor(this.embed.color ? this.embed.color : "RANDOM")
+        .setFooter(this.embed.footer ? this.embed.footer : "djs-games")
+        .setTimestamp()
+
+      let msg = await this.message.channel.send({ embeds: [this.embed], components: [row]})
 
       const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON', time: 60000 });
 
       collector.on('collect', i => {
-	if (i.user.id === this.message.author.id || i.user.id === this.opponent.user.id) {
+	if (i.user.id === this.player.id || i.user.id === this.opp.id) {
 
-     if(i.user.id === this.message.author.id){
+     if(i.user.id === this.player.id){
        if(player1Choosed) return i.reply({content: "You have already chosen your answer.", ephemeral: true})
        
        player1Choosed = i.customId 
@@ -134,50 +166,45 @@ class RockPaperScissors {
 
     if(player1Choosed && player2Choosed){
       if(player1Choosed === "rock" && player2Choosed === "scissors"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "scissors" && player2Choosed === "paper"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "paper" && player2Choosed === "rock"){
-          winner = this.message.author.id
+          winner = this.player.id
         }
         if(player1Choosed === "paper" && player2Choosed === "scissors"){
-          winner = this.opponent.user.id
+          winner = this.opp.id
         }
         if(player1Choosed === "scissors" && player2Choosed === "rock"){
-          winner = this.opponent.user.id
+          winner = this.opp.id
         }
         if(player1Choosed === "rock" && player2Choosed === "paper"){
-          winner = this.opponent.user.id
+          winner = this.opp.id
         }
 
-        if(winner === this.opponent.user.id){
-          this.message.reply(this.winMessage.replace("{winner}", this.opponent.user.username))
+        if(winner === this.opp.id){
+        
+            msg.reply(this.winMessage.replace("{winner}", this.opp.username))
             
-          msg.edit({embeds: [{
-            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.opponent.user.username}`,
-            color: this.embedColor
-          }], 
-            components: []})
+          this.embed.setDescription( `${this.player.username}'s Answer: ${player1Choosed}\n${this.opp.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.opp.username}`)
           
-        } else if(winner === this.message.author.id){
-          this.message.reply(this.winMessage.replace("{winner}", this.message.author.username))
+          msg.edit({embeds: [this.embed], components: []})
+          
+        } else if(winner === this.player.id){
+          msg.reply(this.winMessage.replace("{winner}", this.player.username))
             
-          msg.edit({embeds: [{
-            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.message.author.username}`,
-            color: this.embedColor
-          }], 
-            components: []})
+          this.embed.setDescription(`${this.player.username}'s Answer: ${player1Choosed}\n${this.opp.username}'s Answer: ${player2Choosed}\n\nWinner: ${this.player.username}`)
+
+            msg.edit({embeds: [this.embed], components: []})
           
         } else {
-          this.message.reply(this.tieMessage)
+          msg.reply(this.tieMessage)
             
-          msg.edit({embeds: [{
-            title: `${this.message.author.username}'s Answer: ${player1Choosed}\n${this.opponent.user.username}'s Answer: ${player2Choosed}\n\nWinner: NoOne`,
-            color: this.embedColor
-          }], 
-            components: []})
+          this.embed.setDescription( `${this.player.username}'s Answer: ${player1Choosed}\n${this.opp.username}'s Answer: ${player2Choosed}\n\nWinner: NoOne`)
+          
+          msg.edit({embeds: [this.embed ], components: []})
         }
     }
 	} else {
@@ -186,10 +213,9 @@ class RockPaperScissors {
 });
 
 collector.on('end', collected => {
-	    msg.edit({embeds: [{
-        title: "Game Ended", 
-        color: this.embedColor
-      }]})
+	    this.embed.setDescription("Game Ended!")
+	    
+	    msg.edit({embeds: [this.embed ], components: []})
      })
     
   }
