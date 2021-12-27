@@ -20,8 +20,15 @@ const letterEmojisMap = {
 
 class HangMan {
     constructor(options) {
-        if (!options.message) throw new TypeError('Missing argument: message')
-        this.message = options.message;
+        if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
+
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
         this.theme = options.theme || possible_themes[Math.floor(Math.random() * possible_themes.length)]
         this.embedColor = options.embedColor || 'RANDOM'
         this.hangManHat = options.hangManHat || '🎩'
@@ -29,12 +36,20 @@ class HangMan {
         this.hangManShirt = options.hangManShirt || '👕'
         this.hangManPants = options.hangManPants || '🩳'
         this.hangManBoots = options.hangManBoots || '👞👞'
-
-
+        this.slash = options.slash ? options.slash : false
     }
 
 
     start = async () => {
+        
+        let player;
+      
+        if(this.slash) {
+          player = this.message.user
+          this.message.reply({content: "Game started!" , ephemeral: true })
+        } else {
+          player = this.message.author
+        }
 
         const theme = this.theme
 
@@ -75,13 +90,13 @@ class HangMan {
             .addField(`How to play?`, `React to this message with a letter emoji! Example: 🇦, 🇧`)
         const gameMessage = await this.message.channel.send({ embeds: [embed] })
 
-        const filter = (reaction, user) => ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"].includes(reaction.emoji.name) && user.id === this.message.author.id
+        const filter = (reaction, user) => ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"].includes(reaction.emoji.name) && user.id === player.id
 
         const gameCollector = gameMessage.createReactionCollector({ filter });
 
         gameCollector.on("collect", async (reaction, user) => {
 
-            if (user.id != this.message.author.id) {
+            if (user.id != player.id) {
                 reaction.users.remove(user)
                 return
             }

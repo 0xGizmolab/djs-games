@@ -1,23 +1,43 @@
-const discord = require('discord.js')
+const { MessageEmbed } = require("discord.js")
 
 class ConnectFour {
 
     constructor(options) {
-        if (!options.message) throw new TypeError('Missing argument: message')
-        this.gameEmbed = null
-        this.message = options.message
+        if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
+
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
         this.player1 = options.player1 || '🔴'
         this.player2 = options.player2 || '🟡'
+        this.embed = options.embed ? options.embed : {}
+        this.opponent = options.opponent ? options.opponent : options.message.mentions.users.first()
+        this.slash = options.slash ? options.slash : false
+        this.opponent = options.opponent ? options.opponent : options?.message?.mentions?.users?.first()
+      
     }
 
     start() {
 
-        const challenger = this.message.author;
-        const oppenent = this.message.mentions.users.first();
+      let challenger;
+      let oppenent;
+      
+      if(this.slash) {
+        challenger = this.message.user
+        oppenent = this.opponent.user
+        this.message.reply("Game Started.")
+      } else {
+        challenger = this.message.author
+        oppenent = this.opponent.author
+      }
+      
+        if (!oppenent) return this.message.channel.send(`**Opponent  is required option.**`)
 
-        if (!oppenent) return this.message.channel.send(`**Who do you wanna play Connect Four with?(Mention the person with the command.**`)
-
-        const board = [
+      const board = [
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -26,7 +46,7 @@ class ConnectFour {
             ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ];
 
-        const renderBoard = (board) => {
+      const renderBoard = (board) => {
             let tempString = "";
             for (const boardSection of board) {
                 tempString += `${boardSection.join("")}\n`;
@@ -38,11 +58,13 @@ class ConnectFour {
 
         const initialState = renderBoard(board);
 
-        const initial = new discord.MessageEmbed()
-            .setTitle(`${this.player1} It's your turn, ${this.message.author.username}!`)
-            .setDescription(initialState)
-            .setFooter(`${challenger.username} vs ${oppenent.username}`)
-        this.message.channel.send({ embeds: [initial] }).then(gameMessage => {
+      this.embed = new MessageEmbed()
+      .setTitle(this.embed.title ? this.embed.title : "C4 Game-")
+      .setDescription(initialState)
+      .setFooter(this.embed.footer ? this.embed.footer : `${challenger?.username} v/s ${oppenent?.username}`)
+      .setColor(this.embed.color ? this.embed.color : "RANDOM")
+
+      this.message.channel.send({ embeds: [this.embed] }).then(gameMessage => {
 
             gameMessage.react("1️⃣")
             gameMessage.react("2️⃣")
@@ -183,10 +205,8 @@ class ConnectFour {
 
                     if (tieCheck()) {
                         gameMessage.reactions.removeAll()
-                        const TieEmbed = new discord.MessageEmbed()
-                            .setTitle(`The game ended, it is a Tie!`)
-                            .setDescription(renderBoard(board))
-                            .setFooter(`${challenger.username} vs ${oppenent.username}`)
+                            this.embed.setTitle(`The game ended, it is a Tie!`)
+                            this.embed.setDescription(renderBoard(board))
                         gameCollector.stop("Tie Game")
                         return gameMessage.edit({ embeds: [TieEmbed] })
                     }
@@ -196,27 +216,22 @@ class ConnectFour {
                         const data = func();
                         if (data) {
                             gameMessage.reactions.removeAll()
-
-                            const WinEmbed = new discord.MessageEmbed()
-                                .setTitle(`${gameData[player].member.username} has won the game!`)
-                                .setDescription(renderBoard(board))
-                                .setFooter(`${challenger.username} vs ${oppenent.username}`)
+                                this.embed.setTitle(`${gameData[player].member.username} has won the game!`)
+                                this.embed.setDescription(renderBoard(board))
                             gameCollector.stop(`${gameData[player].member.id} won`);
-                            return gameMessage.edit({ embeds: [WinEmbed] })
+                            return gameMessage.edit({ embeds: [this.embed] })
                         }
                     }
 
                     player = (player + 1) % 2;
-
-                    const newEmbed = new discord.MessageEmbed()
-                        .setTitle(`${gameData[player].playerColor} -  It's your turn, ${gameData[player].member.username}!`)
-                        .setDescription(renderBoard(board))
-                        .setFooter(`${challenger.username} vs ${oppenent.username}`)
-                    gameMessage.edit({ embeds: [newEmbed] });
+                        this.embed.setTitle(`${gameData[player].playerColor} -  It's your turn, ${gameData[player].member.username}!`)
+                        this.embed.setDescription(renderBoard(board))
+                  
+                    gameMessage.edit({ embeds: [this.embed] });
                 }
             })
         })
+
     }
 }
-
-module.exports = ConnectFour;
+module.exports = ConnectFour

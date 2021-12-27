@@ -17,6 +17,16 @@ class TicTacToe {
    */
 
     constructor(options) {
+        if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
+
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
+        this.slash = options.slash ? options.slash : false
         if (!options.xEmoji) throw new TypeError('Missing argument: xEmoji')
         if (typeof options.xEmoji !== 'string') throw new TypeError('Error: xEmoji must be a string')
 
@@ -31,9 +41,6 @@ class TicTacToe {
 
         if (!options.opponent) throw new TypeError('Error: Missing argument opponent')
 
-        if (!options.message) throw new TypeError('Error: Missing argument message')
-
-        this.message = options.message;
         this.xEmoji = options.xEmoji
         this.oEmoji = options.oEmoji
         this.opponent = options.opponent
@@ -42,6 +49,17 @@ class TicTacToe {
         this.embedDescription = options.embedDescription
     }
     async start() {
+      let challenger;
+      let oppenent;
+      
+      if(this.slash) {
+        challenger = this.message.user
+        oppenent = this.opponent.user
+        this.message.reply({content: "Game started", ephemeral: true })
+      } else {
+        challenger = this.message.author
+        oppenent = this.opponent.author
+      }
         let a1 = '⬜'
         let a2 = '⬜'
         let a3 = '⬜'
@@ -71,22 +89,22 @@ class TicTacToe {
         let c33 = (getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4) + '-' + getRandomString(4))
 
         let player = 0;
-        const author = this.message.author.id
-        const member = this.opponent
-        const authorName = this.message.author.username
+        const author = challenger.id
+        const member = oppenent
+        const authorName = challenger.username
 
         const midDuel = new Set()
 
         if (midDuel.has(author)) {
             return this.message.channel.send(`You're currently in a duel`)
         } else if (midDuel.has(member.id)) {
-            return this.message.channel.send(`<@${member.id}> is currently in a duel`)
+            return this.message.reply(`<@${member.id}> is currently in a duel`)
         } if (member.id === this.message.client.user.id) {
-            return this.message.channel.send("You can't duel me lmfao")
+            return this.message.reply("You can't duel me lmfao")
         }
         const gameData = [
-            { member: this.message.author, em: this.xEmoji, color: this.xColor },
-            { member: member, em: this.oEmoji, color: this.oColor }
+            { member: challenger, em: this.xEmoji, color: this.xColor },
+            { member: oppenent, em: this.oEmoji, color: this.oColor }
         ];
         let Embed = new MessageEmbed()
             .setDescription(this.embedDescription || `🎮 ${authorName} VS ${this.opponent.username} 🎮`)
@@ -149,7 +167,7 @@ class TicTacToe {
         }).then(async (msg) => {
             midDuel.add(author)
             midDuel.add(member.id)
-            const gameFilter = m => m.user.id === this.message.author.id || m.user.id === this.opponent.id
+            const gameFilter = m => m.user.id === challenger.id || m.user.id === oppenent.id
 
             const gameCollector = msg.createMessageComponentCollector({ gameFilter, componentType: 'BUTTON' });
 

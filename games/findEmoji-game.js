@@ -5,23 +5,32 @@ let emojiChoosen;
 
 class FindEmoji {
   constructor(options) {
-    if (!options.message) throw new TypeError('Missing argument: message')
+      if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
 
-    if (typeof options.timeoutTime !== 'number') throw new TypeError('Error: timeoutTime must be a number')
+            this.message = options.interaction
+          
+      } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
 
-    this.message = options.message
-    this.winMessage = options.winMessage ? options.winMessage : "WoW! You won."
-    this.loseMessage = options.loseMessage ? options.loseMessage : "Oops! thats wrong."
-    this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Timeout :()"
-    this.timeoutTime = options.timeoutTime ? options.timeoutTime : 60000
-    this.emojiUsed = []
+            this.message = options.message
+        }
+        this.slash = options.slash ? options.slash : false
+        this.winMessage = options.winMessage ? options.winMessage : "WoW! You won."
+        this.loseMessage = options.loseMessage ? options.loseMessage : "Oops! thats wrong."
+        this.timeOutMessage = options.timeOutMessage ? options.timeOutMessage : "Timeout :()"
+        this.timeoutTime = options.timeoutTime ? options.timeoutTime : 60000
+        this.emojiUsed = []
   }
 
   //Start Game
 
   async start() {
-
-    let buttons = createButtons(this.emojiUsed)
+      if(this.slash) {
+          this.message.reply({content: "Game Started", ephemeral: true})
+      }  
+      
+      let buttons = createButtons(this.emojiUsed)
 
     let msg = await this.message.channel.send({
       content: "Here's your board I  will edit the buttons after 5 sec...", components: [
@@ -52,9 +61,8 @@ class FindEmoji {
       ]
     })
 
-
     setTimeout(async () => {
-      await editButtons(msg, this.message, this.winMessage, this.loseMessage, this.timeOutMessage, this.emojiUsed)
+      await editButtons(msg, this.message, this.winMessage, this.loseMessage, this.timeOutMessage, this.emojiUsed, this.slash)
     }, 5000)
   }
 }
@@ -77,7 +85,7 @@ function createButtons(emojiUsed) {
   return buttons;
 }
 
-async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage, emojiUsed) {
+async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage, emojiUsed, slash) {
   const buttons = []
 
   msg.components.map(c => {
@@ -121,14 +129,19 @@ async function editButtons(msg, message, winMessage, loseMessage, timeOutMessage
     ]
   })
 
-  await handleGame(msg, message, winMessage, loseMessage, timeOutMessage)
+  await handleGame(msg, message, winMessage, loseMessage, timeOutMessage, slash)
 }
 
-async function handleGame(msg, message, winMessage, loseMessage, timeOutMessage) {
+async function handleGame(msg, message, winMessage, loseMessage, timeOutMessage, slash) {
+    let player;
 
-  const filter = i => {
-    return i.user.id === message.author.id
-  }
+    if(slash) {
+        player = message.user
+    } else {
+        player = message.author
+    }   
+    const filter = i => {
+    return i.user.id === player.id}
 
   msg.awaitMessageComponent({ filter, componentType: 'BUTTON', time: this.timeoutTime })
     .then(interaction => {

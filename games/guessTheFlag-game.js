@@ -5,7 +5,16 @@ class GTF {
         if (typeof options.token !== 'string') throw new TypeError('token must be in a string')
         if (!options.stopCommand) throw new TypeError('Missing argument: stopCommand')
         if (typeof options.stopCommand !== 'string') throw new TypeError('stopCommand Must be a string')
-        if (!options.message) throw new TypeError('Missing argument: message')
+         if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
+
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
+        this.slash = options.slash ? options.slash : false
         /*
                 if (typeof options.winFooter !== 'string') throw new TypeError('embedFooter must be a string')
                 if (typeof options.winColor !== 'string') throw new TypeError('embedColor must be a string')
@@ -15,8 +24,7 @@ class GTF {
         
                 if (typeof options.questionFooter !== 'string') throw new TypeError('embedFooter must be a string')
                 if (typeof options.questionColor !== 'string') throw new TypeError('embedColor must be a string')
-                */
-        this.message = options.message;
+                *\\\*/
         this.token = options.token;
         this.winFooter = options.winFooter;
         this.winColor = options.winColor
@@ -34,6 +42,14 @@ class GTF {
 
     }
     async start() {
+      let player;
+      if(this.slash) {
+        player = this.message.user
+        this.message.reply({content: "Game Started!", ephemeral: true })
+      } else {
+        player = this.message.author
+      }
+      
         const fetch = require("node-fetch")
         const Discord = require('discord.js');
         fetch(`https://api.dagpi.xyz/data/flag`, {
@@ -52,7 +68,7 @@ class GTF {
 
                 const right = new Discord.MessageEmbed()
                     .setTitle(this.winMessage)
-                    .setAuthor(this.message.author.tag)
+                    .setAuthor(player.tag)
                     .setColor(this.winColor || "RANDOM")
                     .setDescription(`It was ${data.Data.name.common}`)
                     .setImage(data.flag)
@@ -62,25 +78,26 @@ class GTF {
                 const wrong = new Discord.MessageEmbed()
                     .setTitle(this.loseMessage)
                     .setColor(this.lostColor || "RANDOM")
-                    .setAuthor(this.message.author.tag)
+                    .setAuthor(player.tag)
                     .setDescription(`It was ${data.Data.name.common}`)
                     .setImage(data.flag)
                     .setFooter(this.lostFooter || "Made by GizmoLab")
 
 
                 this.message.channel.send({ embeds: [que] })
-                const gameFilter = m => m.author.id === this.message.author.id
+                const gameFilter = m => m.author.id = player.id
                 const gameCollector = this.message.channel.createMessageCollector({ gameFilter });
                 let i = this.maxAttempts - 1;
                 gameCollector.on('collect', async msg => {
-                    if (msg.author.bot || msg.author.id != this.message.author.id) return
+                   if (msg.author.bot || msg.author.id != player.id) return
+                    
                     const selection = msg.content;
-                    if (msg.author.id === this.message.author.id && selection.includes((this.commandName).toLowerCase())) {
+                    if (msg.author.id === player.id && selection.includes((this.commandName).toLowerCase())) {
                         this.message.channel.send({ content: `You already have one game running` })
                         return;
                     }
                     if (selection === data.Data.name.common.toLowerCase()) {
-                        this.message.reply({ embeds: [right] })
+                        msg.reply({ embeds: [right] })
                         gameCollector.stop()
                     } else if (selection === this.stopCommand) {
                         this.message.channel.send({ embeds: [wrong] })

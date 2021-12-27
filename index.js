@@ -1,4 +1,4 @@
-module.exports.SnakeGame = require('./games/snake-game')
+module.exports.SnakeGame = require('./games/snake-game');
 
 module.exports.TicTacToe = require('./games/tictactoe-game')
 
