@@ -16,9 +16,16 @@ class Pokemon {
         if (!options.token) throw new TypeError('Missing argument: token')
         if (typeof options.token !== 'string') throw new TypeError('token must be in a string')
 
-        if (!options.message) throw new TypeError('Missing argument: message')
+      if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
 
-        this.message = options.message;
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
+        this.slash = options.slash ? options.slash : false
         this.winMessage = options.winMessage || '`You Guessed It Right!`';
         this.loseMessage = options.loseMessage || 'You Lost!';
         this.wrongGuess = options.wrongGuess || 'Wrong Guess Try Again!';
@@ -29,6 +36,13 @@ class Pokemon {
 
     }
     async start() {
+      let player;
+      if(this.slash) {
+        player = this.message.user
+        this.message.reply({content: "Game Started!", ephemeral: true })
+      } else {
+        player = this.message.author
+      }
         const fetch = require("node-fetch")
         const Discord = require('discord.js');
         fetch(`https://api.dagpi.xyz/data/wtp`, {
@@ -45,11 +59,11 @@ class Pokemon {
                     .addField(`Abilities:`, `${data.Data.abilities}`)
                     .setImage(data.question)
                     .setColor(this.embedColor)
-                    .setFooter(`You have Unlimited Chances! Type stop to stop the game`)
+                    .setFooter(`You have ${this.maxAttempts} Chance(s)! Type stop to stop the game`)
 
                 const right = new Discord.MessageEmbed()
                     .setTitle(this.winMessage)
-                    .setAuthor(this.message.author.tag)
+                    .setAuthor(player.tag)
                     .setURL(data.Data.Link)
                     .setDescription(`It was ${data.Data.name}`)
                     .setColor(this.embedColor)
@@ -58,7 +72,7 @@ class Pokemon {
 
                 const wrong = new Discord.MessageEmbed()
                     .setTitle(this.loseMessage)
-                    .setAuthor(this.message.author.tag)
+                    .setAuthor(player.tag)
                     .setURL(data.Data.Link)
                     .setDescription(`It was ${data.Data.name}`)
                     .setColor(this.embedColor)
@@ -66,7 +80,7 @@ class Pokemon {
 
 
                 this.message.channel.send({ embeds: [pok] })
-                const gameFilter = m => m.author.id === this.message.author.id
+                const gameFilter = m => m.author.id === player.tag
                 const gameCollector = this.message.channel.createMessageCollector({ gameFilter });
                 let i = this.maxAttempts - 1;
                 gameCollector.on('collect', async msg => {
