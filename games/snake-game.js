@@ -16,9 +16,16 @@ class SnakeGame {
             }
         }
 
-        if (!options.message) throw new TypeError('Missing argument: message')
+       if(options.slash) {
+            if(!options.interaction) throw new TypeError("[djs-games] Interaction is not defined.")
 
-        this.message = options.message;
+            this.message = options.interaction
+        } else {
+            if(!options.message) throw new TypeError("[djs-games] Message is not defined.")
+
+            this.message = options.message
+        }
+        this.slash = options.slash ? options.slash : false
         this.buttons = options.buttons || false;
         this.snake = options.snake || "🟩";
         this.apple = options.apple || "🍎";
@@ -31,6 +38,13 @@ class SnakeGame {
     }
 
     start() {
+      let player;
+      if(this.slash) {
+        player = this.message.user
+        this.message.reply({content: "Game Started!", ephemeral: true })
+      } else {
+        player = this.message.author
+      }
         if (!this.buttons) {
 
             let snake = [{ x: 5, y: 5 }]
@@ -82,7 +96,7 @@ class SnakeGame {
 
             const embed = new MessageEmbed()
                 .setColor(this.embedColor)
-                .setTitle(`Snake Game - ${this.message.author.username}`)
+                .setTitle(`Snake Game - ${player.username}`)
                 .setDescription(gameBoardTostring())
                 .setTimestamp();
 
@@ -94,7 +108,7 @@ class SnakeGame {
 
                 const waitForReaction = () => {
 
-                    const filter = (reaction, user) => ["⬅️", "⬆️", "⬇️", "➡️"].includes(reaction.emoji.name) && (user.id === this.message.author.id);
+                    const filter = (reaction, user) => ["⬅️", "⬆️", "⬇️", "➡️"].includes(reaction.emoji.name) && (user.id === player.id);
 
                     gameMessage.awaitReactions({ filter: filter, max: 1, time: 60000, errors: ['time'] })
                         .then(collected => {
@@ -146,7 +160,7 @@ class SnakeGame {
 
                             const editEmbed = new MessageEmbed()
                                 .setColor(this.embedColor)
-                                .setTitle(`Game Over - ${this.message.author.username}`)
+                                .setTitle(`Game Over - ${player.username}`)
                                 .setDescription(`**You didn't react for a while!**\n**Total Apples Grabbed: **${score}`)
                                 .setTimestamp()
                             gameMessage.edit({ embeds: [editEmbed] })
@@ -165,7 +179,7 @@ class SnakeGame {
 
                     const editEmbed = new MessageEmbed()
                         .setColor(this.embedColor)
-                        .setTitle(`Snake Game - ${this.message.author.username}`)
+                        .setTitle(`Snake Game - ${player.username}`)
                         .setDescription(gameBoardTostring())
                         .setTimestamp();
                     gameMessage.edit({ embeds: [editEmbed] })
@@ -177,7 +191,7 @@ class SnakeGame {
 
                     const editEmbed = new MessageEmbed()
                         .setColor(this.embedColor)
-                        .setTitle(`Game Over - ${this.message.author.username}`)
+                        .setTitle(`Game Over - ${player.username}`)
                         .setDescription(`**Total Apples Grabbed: **${score}`)
                         .setTimestamp()
                     gameMessage.edit({ embeds: [editEmbed] })
@@ -236,7 +250,7 @@ class SnakeGame {
 
             const embed = new MessageEmbed()
                 .setColor(this.embedColor)
-                .setTitle(`Snake Game - ${this.message.author.username}`)
+                .setTitle(`Snake Game - ${player.username}`)
                 .setDescription(gameBoardTostring())
                 .setTimestamp();
 
@@ -289,7 +303,7 @@ class SnakeGame {
                 const waitForReaction = () => {
 
                     const filter = i => {
-                        return i.user.id === this.message.author.id;
+                        return i.user.id === player.id
                     };
 
                     gameMessage.awaitMessageComponent({ filter, componentType: 'BUTTON', max: 1, time: 60000, errors: ['time'] })
@@ -345,7 +359,7 @@ class SnakeGame {
 
                             const editEmbed = new MessageEmbed()
                                 .setColor(this.embedColor)
-                                .setTitle(`Game Over - ${this.message.author.username}`)
+                                .setTitle(`Game Over - ${player.username}`)
                                 .setDescription(`**You didn't react for a while!**\n**Total Apples Grabbed: **${score}`)
                                 .setTimestamp()
                             gameMessage.edit({ embeds: [editEmbed], components: [] })
@@ -364,7 +378,7 @@ class SnakeGame {
 
                     const editEmbed = new MessageEmbed()
                         .setColor(this.embedColor)
-                        .setTitle(`Snake Game - ${this.message.author.username}`)
+                        .setTitle(`Snake Game - ${player.username}`)
                         .setDescription(gameBoardTostring())
                         .setTimestamp();
                     gameMessage.edit({ embeds: [editEmbed], components: [row1, row2] })
@@ -376,7 +390,7 @@ class SnakeGame {
 
                     const editEmbed = new MessageEmbed()
                         .setColor(this.embedColor)
-                        .setTitle(`Game Over - ${this.message.author.username}`)
+                        .setTitle(`Game Over - ${player.username}`)
                         .setDescription(`**Total Apples Grabbed: **${score}`)
                         .setTimestamp()
                     gameMessage.edit({ embeds: [editEmbed], components: [] })
